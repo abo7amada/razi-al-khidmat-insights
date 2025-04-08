@@ -65,6 +65,11 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ onSelectLocation, s
       })
     : locations;
 
+  // Handle search query change
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value || "");
+  };
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -84,7 +89,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ onSelectLocation, s
           <CommandInput 
             placeholder={language === 'ar' ? 'بحث عن المواقع' : 'Search locations'}
             value={searchQuery}
-            onValueChange={setSearchQuery}
+            onValueChange={handleSearchChange}
           />
           <CommandEmpty>{language === 'ar' ? 'لا توجد مواقع' : 'No locations found.'}</CommandEmpty>
           <CommandGroup>
