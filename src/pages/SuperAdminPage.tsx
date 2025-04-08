@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import CompanyManagement from '../components/super-admin/CompanyManagement';
 import BillingManagement from '../components/super-admin/BillingManagement';
@@ -7,10 +7,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import ProtectedRoute from '../components/ProtectedRoute';
+import { mockCompanies } from '../types/company';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 const SuperAdminPage = () => {
   const { isSuperAdmin } = useAuth();
   const [activeTab, setActiveTab] = useState<string>('companies');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  
+  useEffect(() => {
+    // محاكاة تحميل البيانات
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
   
   if (!isSuperAdmin) {
     return <Navigate to="/unauthorized" replace />;
@@ -21,6 +34,16 @@ const SuperAdminPage = () => {
       <Layout currentPage="dashboard">
         <div className="space-y-6">
           <h1 className="text-3xl font-bold">لوحة تحكم المدير الرئيسي</h1>
+          
+          {mockCompanies.length === 0 && !isLoading && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>تنبيه</AlertTitle>
+              <AlertDescription>
+                لم يتم العثور على أي شركات في النظام. يرجى إضافة شركات جديدة.
+              </AlertDescription>
+            </Alert>
+          )}
           
           <Tabs defaultValue="companies" value={activeTab} onValueChange={setActiveTab}>
             <TabsList>

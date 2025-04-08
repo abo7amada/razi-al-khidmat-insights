@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,6 +22,7 @@ import { LanguageProvider } from "./context/LanguageContext";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CustomerSurveyPage from "./pages/CustomerSurveyPage";
+import SurveyPreviewPage from "./pages/SurveyPreviewPage";
 import EvaluationsPage from "./pages/EvaluationsPage";
 import ComplaintsPage from "./pages/ComplaintsPage";
 import StatsPage from "./pages/StatsPage";
@@ -51,6 +53,7 @@ const AppRoutes = () => {
       
       {/* Public survey page */}
       <Route path="/survey" element={<CustomerSurveyPage />} />
+      <Route path="/survey-preview" element={<SurveyPreviewPage />} />
       
       {/* مسارات المدير الرئيسي */}
       <Route path="/admin" element={
