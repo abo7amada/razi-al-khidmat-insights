@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,7 +10,6 @@ import NotFound from "./pages/NotFound";
 import SurveyCreatorPage from "./pages/SurveyCreatorPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import UsersPage from "./pages/UsersPage";
-import LocationsPage from "./pages/LocationsPage";
 import SitesPage from "./pages/SitesPage";
 import InsightsPage from "./pages/InsightsPage";
 import VendorSettingsPage from "./pages/VendorSettingsPage";
@@ -97,11 +95,8 @@ const AppRoutes = () => {
           <UsersPage />
         </ProtectedRoute>
       } />
-      <Route path="/locations" element={
-        <ProtectedRoute>
-          <LocationsPage />
-        </ProtectedRoute>
-      } />
+      {/* Redirect from /locations to /sites */}
+      <Route path="/locations" element={<Navigate to="/sites" replace />} />
       <Route path="/sites" element={
         <ProtectedRoute allowedRoles={['super_admin', 'system_admin', 'company_admin', 'company_owner', 'editor']}>
           <SitesPage />

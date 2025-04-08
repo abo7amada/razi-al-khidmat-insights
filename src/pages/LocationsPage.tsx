@@ -1,17 +1,10 @@
 
-import React from 'react';
-import Layout from '../components/Layout';
-import LocationManagement from '../components/LocationManagement';
-import { useLanguage } from '../context/LanguageContext';
+import React, { useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 
+// This page is now just a redirect to SitesPage
 const LocationsPage = () => {
-  const { t } = useLanguage();
-  
-  return (
-    <Layout currentPage="locations">
-      <LocationManagement />
-    </Layout>
-  );
+  return <Navigate to="/sites" replace />;
 };
 
 export default LocationsPage;

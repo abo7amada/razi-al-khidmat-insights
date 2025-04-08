@@ -1,10 +1,9 @@
-
 import React, { ReactNode } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { BarChart3, FileText, Home, FilePlus, Users, MapPin, Settings, LayoutDashboard, ChevronDown, AlertTriangle, CreditCard, LogOut, Store, LineChart } from 'lucide-react';
+import { BarChart3, FileText, Home, FilePlus, Users, Settings, LayoutDashboard, ChevronDown, AlertTriangle, CreditCard, LogOut, Store, LineChart, MapPin } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +22,7 @@ import { ar } from 'date-fns/locale';
 
 interface LayoutProps {
   children: ReactNode;
-  currentPage: 'dashboard' | 'survey' | 'reports' | 'survey-creator' | 'analytics' | 'users' | 'locations' | 'sites' | 'vendor-settings' | 'insights' | 'evaluations' | 'complaints' | 'stats' | 'templates' | 'manual-entry';
+  currentPage: 'dashboard' | 'survey' | 'reports' | 'survey-creator' | 'analytics' | 'users' | 'sites' | 'vendor-settings' | 'insights' | 'evaluations' | 'complaints' | 'stats' | 'templates' | 'manual-entry';
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
@@ -164,14 +163,6 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
-                      <SidebarMenuButton asChild className={currentPage === 'locations' ? 'bg-accent' : ''}>
-                        <a href="/locations">
-                          <MapPin className="h-4 w-4" />
-                          <span>{t('locations')}</span>
-                        </a>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
                       <SidebarMenuButton asChild className={currentPage === 'sites' ? 'bg-accent' : ''}>
                         <a href="/sites">
                           <Store className="h-4 w-4" />
@@ -207,7 +198,6 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                   {currentPage === 'analytics' && t('analytics')}
                   {currentPage === 'insights' && t('insights')}
                   {currentPage === 'users' && t('users')}
-                  {currentPage === 'locations' && t('locations')}
                   {currentPage === 'sites' && t('sites')}
                   {currentPage === 'vendor-settings' && t('vendorSettings')}
                 </h1>
@@ -302,4 +292,3 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
 };
 
 export default Layout;
-
