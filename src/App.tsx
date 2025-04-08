@@ -30,6 +30,16 @@ import TemplateLibraryPage from "./pages/TemplateLibraryPage";
 import ManualEntryPage from "./pages/ManualEntryPage";
 import CommentsReportPage from "./pages/CommentsReportPage";
 
+// Import insights pages
+import InsightsLayout from "./components/insights/InsightsLayout";
+import OverviewPage from "./pages/insights/OverviewPage";
+import InsightsAnalyticsPage from "./pages/insights/InsightsAnalyticsPage";
+import BranchBenchmarkPage from "./pages/insights/BranchBenchmarkPage";
+import SentimentAnalysisPage from "./pages/insights/SentimentAnalysisPage";
+import SmartAlertsPage from "./pages/insights/SmartAlertsPage";
+import AdvancedSegmentationPage from "./pages/insights/AdvancedSegmentationPage";
+import ComingSoonPage from "./pages/insights/ComingSoonPage";
+
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
 
@@ -134,6 +144,22 @@ const AppRoutes = () => {
           <CommentsReportPage />
         </ProtectedRoute>
       } />
+      
+      {/* Insights Routes */}
+      <Route path="/company/:id/insights" element={
+        <ProtectedRoute requireActiveSubscription allowedRoles={['super_admin', 'system_admin', 'company_admin', 'company_owner', 'editor', 'viewer', 'branchManager']}>
+          <InsightsLayout />
+        </ProtectedRoute>
+      }>
+        <Route index element={<Navigate to="overview" replace />} />
+        <Route path="overview" element={<OverviewPage />} />
+        <Route path="analytics" element={<InsightsAnalyticsPage />} />
+        <Route path="branchBenchmark" element={<BranchBenchmarkPage />} />
+        <Route path="sentimentAnalysis" element={<SentimentAnalysisPage />} />
+        <Route path="smartAlerts" element={<SmartAlertsPage />} />
+        <Route path="advancedSegmentation" element={<AdvancedSegmentationPage />} />
+        <Route path="comingSoon" element={<ComingSoonPage />} />
+      </Route>
       
       <Route path="*" element={<NotFound />} />
     </Routes>
