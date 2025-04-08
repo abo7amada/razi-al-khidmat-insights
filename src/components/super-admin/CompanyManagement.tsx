@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { 
@@ -59,13 +58,19 @@ const companySchema = z.object({
 });
 
 const CompanyManagement = () => {
-  const [companies, setCompanies] = useState<Company[]>(mockCompanies);
+  const [companies, setCompanies] = useState<Company[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedPlanExpiry, setSelectedPlanExpiry] = useState<Date | undefined>(undefined);
   const { toast } = useToast();
+
+  // تحميل بيانات الشركات عند تهيئة المكون
+  useEffect(() => {
+    // استخدام البيانات التجريبية من mockCompanies
+    setCompanies(mockCompanies);
+  }, []);
 
   // نموذج إنشاء شركة جديدة
   const createForm = useForm<z.infer<typeof companySchema>>({
@@ -370,79 +375,91 @@ const CompanyManagement = () => {
         </Dialog>
       </div>
 
-      <Table className="border rounded-md">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[250px]">اسم الشركة</TableHead>
-            <TableHead>نوع الاشتراك</TableHead>
-            <TableHead>تاريخ انتهاء الاشتراك</TableHead>
-            <TableHead>الحالة</TableHead>
-            <TableHead className="w-[150px]">الإجراءات</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {companies.map((company) => (
-            <TableRow key={company.id}>
-              <TableCell>
-                <div className="flex items-center">
-                  <Building className="w-5 h-5 mr-2 text-primary" />
-                  {company.name}
-                </div>
-              </TableCell>
-              <TableCell>
-                <Badge variant={company.plan === 'free' ? 'outline' : 'default'}>
-                  {getPlanName(company.plan)}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                {format(new Date(company.planExpiresAt), 'dd/MM/yyyy', { locale: ar })}
-              </TableCell>
-              <TableCell>
-                {company.isActive ? (
-                  <Badge className="bg-green-600">نشط</Badge>
-                ) : (
-                  <Badge variant="destructive">غير نشط</Badge>
-                )}
-              </TableCell>
-              <TableCell>
-                <div className="flex space-x-2 rtl:space-x-reverse">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => loadCompanyForEdit(company)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant={company.isActive ? "destructive" : "default"}
-                    size="sm"
-                    onClick={() => toggleCompanyStatus(company)}
-                  >
-                    {company.isActive ? <AlertTriangle className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
-                  </Button>
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={() => handleRenewSubscription(company)}
-                  >
-                    تجديد
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => {
-                      setSelectedCompany(company);
-                      setIsDeleteDialogOpen(true);
-                    }}
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
-                </div>
-              </TableCell>
+      {companies.length === 0 ? (
+        <div className="text-center p-8 border rounded-md bg-muted/10">
+          <Building className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
+          <h3 className="text-lg font-medium">لا توجد شركات حاليًا</h3>
+          <p className="text-muted-foreground mb-4">قم بإضافة شركة جديدة للبدء</p>
+          <Button onClick={() => setIsCreateDialogOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            إضافة شركة جديدة
+          </Button>
+        </div>
+      ) : (
+        <Table className="border rounded-md">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[250px]">اسم الشركة</TableHead>
+              <TableHead>نوع الاشتراك</TableHead>
+              <TableHead>تاريخ انتهاء الاشتراك</TableHead>
+              <TableHead>الحالة</TableHead>
+              <TableHead className="w-[150px]">الإجراءات</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {companies.map((company) => (
+              <TableRow key={company.id}>
+                <TableCell>
+                  <div className="flex items-center">
+                    <Building className="w-5 h-5 mr-2 text-primary" />
+                    {company.name}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Badge variant={company.plan === 'free' ? 'outline' : 'default'}>
+                    {getPlanName(company.plan)}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  {format(new Date(company.planExpiresAt), 'dd/MM/yyyy', { locale: ar })}
+                </TableCell>
+                <TableCell>
+                  {company.isActive ? (
+                    <Badge className="bg-green-600">نشط</Badge>
+                  ) : (
+                    <Badge variant="destructive">غير نشط</Badge>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <div className="flex space-x-2 rtl:space-x-reverse">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => loadCompanyForEdit(company)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant={company.isActive ? "destructive" : "default"}
+                      size="sm"
+                      onClick={() => toggleCompanyStatus(company)}
+                    >
+                      {company.isActive ? <AlertTriangle className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
+                    </Button>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => handleRenewSubscription(company)}
+                    >
+                      تجديد
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedCompany(company);
+                        setIsDeleteDialogOpen(true);
+                      }}
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
 
       {/* حوار تعديل الشركة */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>

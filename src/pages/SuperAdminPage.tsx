@@ -10,6 +10,7 @@ import ProtectedRoute from '../components/ProtectedRoute';
 
 const SuperAdminPage = () => {
   const { isSuperAdmin } = useAuth();
+  const [activeTab, setActiveTab] = useState<string>('companies');
   
   if (!isSuperAdmin) {
     return <Navigate to="/unauthorized" replace />;
@@ -21,7 +22,7 @@ const SuperAdminPage = () => {
         <div className="space-y-6">
           <h1 className="text-3xl font-bold">لوحة تحكم المدير الرئيسي</h1>
           
-          <Tabs defaultValue="companies">
+          <Tabs defaultValue="companies" value={activeTab} onValueChange={setActiveTab}>
             <TabsList>
               <TabsTrigger value="companies">الشركات</TabsTrigger>
               <TabsTrigger value="billing">الفواتير والاشتراكات</TabsTrigger>
