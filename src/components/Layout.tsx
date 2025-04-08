@@ -8,7 +8,7 @@ import { useIsMobile } from '../hooks/use-mobile';
 
 interface LayoutProps {
   children: ReactNode;
-  currentPage: 'dashboard' | 'survey' | 'reports' | 'survey-creator' | 'analytics' | 'users' | 'locations';
+  currentPage: 'dashboard' | 'survey' | 'reports' | 'survey-creator' | 'analytics' | 'users' | 'locations' | 'vendor-settings';
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
@@ -85,7 +85,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
-                      <SidebarMenuButton asChild>
+                      <SidebarMenuButton asChild className={currentPage === 'vendor-settings' ? 'bg-accent' : ''}>
                         <a href="/vendor-settings">
                           <Settings className="h-4 w-4" />
                           <span>{t('vendorSettings')}</span>
@@ -110,6 +110,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                   {currentPage === 'analytics' && t('analytics')}
                   {currentPage === 'users' && t('users')}
                   {currentPage === 'locations' && t('locations')}
+                  {currentPage === 'vendor-settings' && t('vendorSettings')}
                 </h1>
               </div>
               <div className="flex items-center">
