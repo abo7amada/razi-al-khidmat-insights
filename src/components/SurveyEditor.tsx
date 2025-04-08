@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
@@ -8,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { mockSurveys } from '../data/mockSurveys';
 import { SurveyQuestion } from '../types/survey';
-import { Plus, Trash2, MoveUp, MoveDown } from 'lucide-react';
+import { Plus, Trash2, MoveUp, MoveDown, Share } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -18,11 +19,12 @@ import {
 } from "@/components/ui/select";
 import { toast } from '@/hooks/use-toast';
 import { v4 as uuid } from '@/lib/utils';
+import SurveyShareButton from './SurveyShareButton';
 
 interface SurveyEditorProps {
   surveyId?: string;
   onCancel: () => void;
-  onSave: () => void; // Added this prop to match what's being passed from SurveyCreator
+  onSave: () => void; 
 }
 
 const SurveyEditor: React.FC<SurveyEditorProps> = ({ surveyId, onCancel, onSave }) => {
@@ -241,8 +243,9 @@ const SurveyEditor: React.FC<SurveyEditorProps> = ({ surveyId, onCancel, onSave 
   
   return (
     <Card className="w-full">
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>{surveyId ? t('editSurvey') : t('createNewSurvey')}</CardTitle>
+        {surveyId && <SurveyShareButton surveyId={surveyId} />}
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="edit">
@@ -413,7 +416,10 @@ const SurveyEditor: React.FC<SurveyEditorProps> = ({ surveyId, onCancel, onSave 
       </CardContent>
       <CardFooter className="flex justify-between">
         <Button variant="outline" onClick={onCancel}>{t('cancel')}</Button>
-        <Button onClick={handleSave}>{t('save')}</Button>
+        <div className="flex items-center gap-2">
+          {!surveyId && title && <SurveyShareButton surveyId={`new-${title.replace(/\s+/g, '-').toLowerCase()}`} />}
+          <Button onClick={handleSave}>{t('save')}</Button>
+        </div>
       </CardFooter>
     </Card>
   );

@@ -5,8 +5,10 @@ import VendorSettings from '../components/VendorSettings';
 import { useLanguage } from '../context/LanguageContext';
 
 const VendorSettingsPage = () => {
+  const { t } = useLanguage();
+  
   return (
-    <Layout currentPage="dashboard">
+    <Layout currentPage="vendor-settings">
       <VendorSettings />
     </Layout>
   );
