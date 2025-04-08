@@ -4,7 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import SurveyList from './SurveyList';
 import SurveyEditor from './SurveyEditor';
 import { useIsMobile } from '../hooks/use-mobile';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 
 type ViewState = 'list' | 'create' | 'edit';
 
