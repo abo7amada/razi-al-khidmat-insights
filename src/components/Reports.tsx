@@ -61,13 +61,13 @@ const Reports: React.FC = () => {
     return true;
   });
   
-  const handleExport = (format: 'excel' | 'pdf') => {
+  const handleExport = (format: 'excel' | 'pdf' | 'csv') => {
     // In a real application, this would generate and download the file
     toast({
       title: language === 'ar' ? 'تم التصدير بنجاح' : 'Export Successful',
       description: language === 'ar' 
-        ? `تم تصدير ${filteredData.length} سجل بتنسيق ${format === 'excel' ? 'Excel' : 'PDF'}`
-        : `Exported ${filteredData.length} records as ${format === 'excel' ? 'Excel' : 'PDF'}`,
+        ? `تم تصدير ${filteredData.length} سجل بتنسيق ${format === 'excel' ? 'Excel' : format === 'pdf' ? 'PDF' : 'CSV'}`
+        : `Exported ${filteredData.length} records as ${format === 'excel' ? 'Excel' : format === 'pdf' ? 'PDF' : 'CSV'}`,
     });
   };
   
