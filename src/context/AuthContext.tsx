@@ -137,6 +137,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Set current company from the user organization
   const currentCompany = userOrganization ? { id: userOrganization.id } : null;
 
+  console.log("Current user role:", currentUser?.role);
+  console.log("Is super admin:", isSuperAdmin);
+
   return (
     <AuthContext.Provider 
       value={{ 
@@ -146,7 +149,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated,
         userRole: currentUser?.role || null,
         userOrganization,
-        currentCompany, // Added this property to the context value
+        currentCompany,
         checkAuth,
         isUserInRole,
         isSuperAdmin,

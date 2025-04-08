@@ -18,7 +18,7 @@ const Index = () => {
         <div className="mb-6">
           <Button asChild variant="outline" className="mb-4">
             <Link to="/companies">
-              <Building className="w-4 h-4 ml-2" />
+              <Building className="h-4 w-4 ml-2" />
               إدارة الشركات
             </Link>
           </Button>
