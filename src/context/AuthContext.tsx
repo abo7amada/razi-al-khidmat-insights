@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, mockUsers, Organization, mockOrganizations } from '../components/vendor-settings/types';
 import { UserRole } from '../types/company';
@@ -12,7 +11,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   userRole: UserRole | null;
   userOrganization: Organization | null;
-  currentCompany: { id: string } | null; // Added this property
+  currentCompany: { id: string } | null;
   checkAuth: () => void;
   isUserInRole: (roles: UserRole[]) => boolean;
   isSuperAdmin: boolean;
@@ -22,6 +21,7 @@ interface AuthContextType {
   isEditor: boolean;
   isViewer: boolean;
   isAdmin: boolean;
+  canManageCompanies: boolean; // إضافة خاصية للتحكم بإمكانية إدارة الشركات
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -31,7 +31,7 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   userRole: null,
   userOrganization: null,
-  currentCompany: null, // Added this property to the default context value
+  currentCompany: null,
   checkAuth: () => {},
   isUserInRole: () => false,
   isSuperAdmin: false,
@@ -40,7 +40,8 @@ const AuthContext = createContext<AuthContextType>({
   isCompanyAdmin: false,
   isEditor: false,
   isViewer: false,
-  isAdmin: false
+  isAdmin: false,
+  canManageCompanies: false // إضافة القيمة الافتراضية
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -134,6 +135,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // خاصية للتحقق مما إذا كان المستخدم مسؤولًا بأي شكل
   const isAdmin = isSuperAdmin || isSystemAdmin || isCompanyAdmin || isCompanyOwner;
   
+  // خاصية جديدة للتحقق مما إذا كان المستخدم يستطيع إدارة الشركات
+  const canManageCompanies = isSuperAdmin || isSystemAdmin;
+  
   // Set current company from the user organization
   const currentCompany = userOrganization ? { id: userOrganization.id } : null;
 
@@ -158,7 +162,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isCompanyAdmin,
         isEditor,
         isViewer,
-        isAdmin
+        isAdmin,
+        canManageCompanies // إضافة الخاصية الجديدة
       }}
     >
       {children}

@@ -8,14 +8,14 @@ import { Navigate } from 'react-router-dom';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 const CompaniesPage = () => {
-  const { isSuperAdmin } = useAuth();
+  const { canManageCompanies } = useAuth();
 
-  if (!isSuperAdmin) {
+  if (!canManageCompanies) {
     return <Navigate to="/unauthorized" replace />;
   }
   
   return (
-    <ProtectedRoute allowedRoles={['super_admin']}>
+    <ProtectedRoute allowedRoles={['super_admin', 'system_admin']}>
       <Layout currentPage="companies">
         <Card>
           <CardHeader>

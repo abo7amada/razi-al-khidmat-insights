@@ -10,11 +10,11 @@ import { Link } from 'react-router-dom';
 
 const Index = () => {
   const { t } = useLanguage();
-  const { isSuperAdmin } = useAuth();
+  const { canManageCompanies } = useAuth();
   
   return (
     <Layout currentPage="dashboard">
-      {isSuperAdmin && (
+      {canManageCompanies && (
         <div className="mb-6">
           <Button asChild variant="outline" className="mb-4">
             <Link to="/companies">
