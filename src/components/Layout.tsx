@@ -4,6 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { BarChart3, FileText, Home, FilePlus } from 'lucide-react';
+import { useIsMobile } from '../hooks/use-mobile';
 
 interface LayoutProps {
   children: ReactNode;
@@ -12,10 +13,11 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
   const { t, dir } = useLanguage();
+  const isMobile = useIsMobile();
 
   return (
     <div dir={dir} className={`min-h-screen bg-background ${dir === 'rtl' ? 'font-arabic' : ''}`}>
-      <SidebarProvider>
+      <SidebarProvider defaultOpen={!isMobile}>
         <div className="flex min-h-screen w-full">
           <Sidebar>
             <SidebarContent>
@@ -29,31 +31,31 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                     <SidebarMenuItem>
                       <SidebarMenuButton asChild className={currentPage === 'dashboard' ? 'bg-accent' : ''}>
                         <a href="/">
-                          <Home />
+                          <Home className="h-4 w-4" />
                           <span>{t('dashboard')}</span>
-                        </a>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild className={currentPage === 'survey' ? 'bg-accent' : ''}>
-                        <a href="/survey">
-                          <FileText />
-                          <span>{t('survey')}</span>
                         </a>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
                       <SidebarMenuButton asChild className={currentPage === 'survey-creator' ? 'bg-accent' : ''}>
                         <a href="/survey-creator">
-                          <FilePlus />
+                          <FilePlus className="h-4 w-4" />
                           <span>{t('surveyCreator')}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild className={currentPage === 'survey' ? 'bg-accent' : ''}>
+                        <a href="/survey">
+                          <FileText className="h-4 w-4" />
+                          <span>{t('survey')}</span>
                         </a>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
                       <SidebarMenuButton asChild className={currentPage === 'reports' ? 'bg-accent' : ''}>
                         <a href="/reports">
-                          <BarChart3 />
+                          <BarChart3 className="h-4 w-4" />
                           <span>{t('reports')}</span>
                         </a>
                       </SidebarMenuButton>
@@ -61,7 +63,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                     <SidebarMenuItem>
                       <SidebarMenuButton asChild className={currentPage === 'analytics' ? 'bg-accent' : ''}>
                         <a href="/analytics">
-                          <BarChart3 />
+                          <BarChart3 className="h-4 w-4" />
                           <span>{t('analytics')}</span>
                         </a>
                       </SidebarMenuButton>
@@ -73,10 +75,10 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
           </Sidebar>
 
           <div className="flex-1 flex flex-col overflow-hidden">
-            <header className="bg-white shadow-sm border-b border-border h-16 flex items-center justify-between px-4 lg:px-8">
+            <header className="bg-white shadow-sm border-b border-border h-14 md:h-16 flex items-center justify-between px-2 sm:px-4 lg:px-8">
               <div className="flex items-center">
                 <SidebarTrigger />
-                <h1 className="text-xl font-semibold ms-4">
+                <h1 className="text-base md:text-xl font-semibold ms-2 md:ms-4 truncate">
                   {currentPage === 'dashboard' && t('dashboard')}
                   {currentPage === 'survey' && t('survey')}
                   {currentPage === 'reports' && t('reports')}
@@ -89,7 +91,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
               </div>
             </header>
 
-            <main className="flex-1 overflow-auto p-4 lg:p-8">
+            <main className="flex-1 overflow-auto p-2 sm:p-4 lg:p-6">
               <div className="mx-auto">
                 {children}
               </div>

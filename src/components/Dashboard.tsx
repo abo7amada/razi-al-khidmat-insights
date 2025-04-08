@@ -6,10 +6,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { mockSatisfactionData, locations, calculateSummaryStatistics } from '../data/mockData';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import LocationSelector from './LocationSelector';
+import { useIsMobile } from '../hooks/use-mobile';
 
 const Dashboard: React.FC = () => {
   const { t, language } = useLanguage();
   const [selectedLocationId, setSelectedLocationId] = useState<string | undefined>(undefined);
+  const isMobile = useIsMobile();
   
   // Filter data by location if selected
   const filteredData = selectedLocationId 
@@ -51,7 +53,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -59,7 +61,7 @@ const Dashboard: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-primary">
+            <div className="text-2xl md:text-3xl font-bold text-primary">
               {(stats.overallSatisfaction * 20).toFixed(1)}%
             </div>
             <p className="text-xs text-muted-foreground">
@@ -77,7 +79,7 @@ const Dashboard: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-primary">
+            <div className="text-2xl md:text-3xl font-bold text-primary">
               {stats.responseCount}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -88,7 +90,7 @@ const Dashboard: React.FC = () => {
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="sm:col-span-2 md:col-span-1">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               {t('selectLocation')}
@@ -103,10 +105,10 @@ const Dashboard: React.FC = () => {
         </Card>
       </div>
       
-      <Tabs defaultValue="monthly">
-        <TabsList className="mb-4">
-          <TabsTrigger value="monthly">{t('monthlySurveys')}</TabsTrigger>
-          <TabsTrigger value="categories">{t('feedbackAnalysis')}</TabsTrigger>
+      <Tabs defaultValue="monthly" className="w-full">
+        <TabsList className="mb-4 w-full flex justify-center md:justify-start">
+          <TabsTrigger value="monthly" className="flex-1 md:flex-none">{t('monthlySurveys')}</TabsTrigger>
+          <TabsTrigger value="categories" className="flex-1 md:flex-none">{t('feedbackAnalysis')}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="monthly">
@@ -120,25 +122,31 @@ const Dashboard: React.FC = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[300px]">
+              <div className="h-[250px] md:h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={monthlyData}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 50 }}
+                    margin={{ 
+                      top: 20, 
+                      right: isMobile ? 10 : 30, 
+                      left: isMobile ? 0 : 20, 
+                      bottom: isMobile ? 60 : 50 
+                    }}
                   >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis 
                       dataKey="name" 
                       angle={-45} 
                       textAnchor="end"
-                      tick={{ fontSize: 12 }}
+                      tick={{ fontSize: isMobile ? 10 : 12 }}
                       height={60}
                     />
                     <YAxis 
                       label={{ 
                         value: language === 'ar' ? 'النسبة المئوية (%)' : 'Percentage (%)', 
                         angle: -90, 
-                        position: 'insideLeft' 
+                        position: 'insideLeft',
+                        style: { fontSize: isMobile ? 10 : 12 }
                       }} 
                     />
                     <Tooltip formatter={(value) => [`${value}%`, language === 'ar' ? 'الرضا' : 'Satisfaction']} />
@@ -163,18 +171,36 @@ const Dashboard: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-[300px]">
+                <div className="h-[250px] md:h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={categoryData}
                       layout="vertical"
-                      margin={{ top: 20, right: 30, left: 40, bottom: 20 }}
+                      margin={{ 
+                        top: 20, 
+                        right: isMobile ? 20 : 30, 
+                        left: isMobile ? 35 : 40, 
+                        bottom: isMobile ? 5 : 20 
+                      }}
                     >
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis type="number" domain={[0, 100]} />
-                      <YAxis dataKey="name" type="category" width={100} />
+                      <YAxis 
+                        dataKey="name" 
+                        type="category" 
+                        width={isMobile ? 80 : 100} 
+                        tick={{ fontSize: isMobile ? 10 : 12 }}
+                      />
                       <Tooltip formatter={(value) => [`${value}%`, language === 'ar' ? 'الرضا' : 'Satisfaction']} />
-                      <Bar dataKey="value" fill="#1E40AF" label={{ position: 'right', formatter: (value) => `${value}%` }} />
+                      <Bar 
+                        dataKey="value" 
+                        fill="#1E40AF" 
+                        label={{ 
+                          position: 'right', 
+                          formatter: (value) => `${value}%`,
+                          fontSize: isMobile ? 10 : 12
+                        }} 
+                      />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -191,7 +217,7 @@ const Dashboard: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-[300px]">
+                <div className="h-[250px] md:h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
@@ -199,7 +225,7 @@ const Dashboard: React.FC = () => {
                         cx="50%"
                         cy="50%"
                         labelLine={false}
-                        outerRadius={80}
+                        outerRadius={isMobile ? 65 : 80}
                         fill="#8884d8"
                         dataKey="value"
                         nameKey="name"
