@@ -11,25 +11,30 @@ export const mockSurveys: Survey[] = [
         id: "q1",
         text: "How would you rate the overall service quality?",
         type: "rating",
-        required: true
+        required: true,
+        companyId: "comp1"
       },
       {
         id: "q2",
         text: "What aspects of our services need improvement?",
         type: "multiple-choice",
         options: ["Wait times", "Staff attitude", "Facility cleanliness", "Service effectiveness", "Other"],
-        required: true
+        required: true,
+        companyId: "comp1"
       },
       {
         id: "q3",
         text: "Please share any additional feedback",
         type: "text",
-        required: false
+        required: false,
+        companyId: "comp1"
       }
     ],
     createdAt: "2025-03-15",
     status: "active",
-    responseCount: 42
+    responseCount: 42,
+    createdBy: "user1",
+    companyId: "comp1"
   },
   {
     id: "survey-2",
@@ -41,24 +46,29 @@ export const mockSurveys: Survey[] = [
         text: "Was it easy to find our headquarters?",
         type: "multiple-choice",
         options: ["Very easy", "Easy", "Neutral", "Difficult", "Very difficult"],
-        required: true
+        required: true,
+        companyId: "comp1"
       },
       {
         id: "q2",
         text: "How would you rate the reception staff?",
         type: "rating",
-        required: true
+        required: true,
+        companyId: "comp1"
       },
       {
         id: "q3",
         text: "What is one thing we could improve about our headquarters?",
         type: "text",
-        required: false
+        required: false,
+        companyId: "comp1"
       }
     ],
     createdAt: "2025-03-20",
     status: "active",
-    responseCount: 27
+    responseCount: 27,
+    createdBy: "user1",
+    companyId: "comp1"
   },
   {
     id: "survey-3",
@@ -69,24 +79,29 @@ export const mockSurveys: Survey[] = [
         id: "q1",
         text: "How easy is it to navigate our online platform?",
         type: "rating",
-        required: true
+        required: true,
+        companyId: "comp1"
       },
       {
         id: "q2",
         text: "Which online services do you use most frequently?",
         type: "multiple-choice",
         options: ["Information lookup", "Online appointments", "Document submission", "Status checking", "Other"],
-        required: true
+        required: true,
+        companyId: "comp1"
       },
       {
         id: "q3",
         text: "What additional online services would you like to see?",
         type: "text",
-        required: false
+        required: false,
+        companyId: "comp1"
       }
     ],
     createdAt: "2025-04-01",
     status: "inactive",
-    responseCount: 12
+    responseCount: 12,
+    createdBy: "user2",
+    companyId: "comp1"
   }
 ];

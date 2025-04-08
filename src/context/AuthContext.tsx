@@ -18,6 +18,7 @@ interface AuthContextType {
   isCompanyAdmin: boolean;
   isEditor: boolean;
   isViewer: boolean;
+  isAdmin: boolean; // إضافة جديدة
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -32,7 +33,8 @@ const AuthContext = createContext<AuthContextType>({
   isSuperAdmin: false,
   isCompanyAdmin: false,
   isEditor: false,
-  isViewer: false
+  isViewer: false,
+  isAdmin: false // إضافة جديدة
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -120,6 +122,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isCompanyAdmin = currentUser?.role === 'company_admin';
   const isEditor = currentUser?.role === 'editor';
   const isViewer = currentUser?.role === 'viewer';
+  
+  // خاصية جديدة للتحقق مما إذا كان المستخدم مسؤولًا بأي شكل
+  const isAdmin = isSuperAdmin || isCompanyAdmin;
 
   return (
     <AuthContext.Provider 
@@ -135,7 +140,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isSuperAdmin,
         isCompanyAdmin,
         isEditor,
-        isViewer
+        isViewer,
+        isAdmin // إضافة الخاصية الجديدة
       }}
     >
       {children}

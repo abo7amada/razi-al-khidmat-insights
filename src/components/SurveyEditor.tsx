@@ -20,6 +20,7 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { v4 as uuid } from '@/lib/utils';
 import SurveyShareButton from './SurveyShareButton';
+import { useAuth } from '../context/AuthContext';
 
 interface SurveyEditorProps {
   surveyId?: string;
@@ -29,6 +30,7 @@ interface SurveyEditorProps {
 
 const SurveyEditor: React.FC<SurveyEditorProps> = ({ surveyId, onCancel, onSave }) => {
   const { t, language } = useLanguage();
+  const { currentUser, userOrganization } = useAuth();
   
   const existingSurvey = surveyId 
     ? mockSurveys.find(s => s.id === surveyId)
@@ -40,13 +42,16 @@ const SurveyEditor: React.FC<SurveyEditorProps> = ({ surveyId, onCancel, onSave 
     existingSurvey?.questions || []
   );
   
+  const companyId = currentUser?.organizationId || 'comp1';
+  
   const addQuestion = () => {
     const newQuestion: SurveyQuestion = {
       id: `question-${questions.length + 1}-${Date.now()}`,
       text: '',
       type: 'multiple-choice',
       options: [''],
-      required: true
+      required: true,
+      companyId: companyId
     };
     
     setQuestions([...questions, newQuestion]);

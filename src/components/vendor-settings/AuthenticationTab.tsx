@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '../../context/AuthContext';
 import { User as UserType, mockUsers } from './types';
+import { UserRole } from '../../types/company';
 
 interface AuthenticationTabProps {
   onSaveCredentials: () => void;
@@ -19,14 +20,17 @@ interface AuthenticationTabProps {
 const AuthenticationTab: React.FC<AuthenticationTabProps> = ({ onSaveCredentials }) => {
   const { t } = useLanguage();
   const { toast } = useToast();
-  const { isAdmin } = useAuth();
+  const { currentUser } = useAuth();
   const [adminUsername, setAdminUsername] = useState('admin@system.com');
   const [adminPassword, setAdminPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [users, setUsers] = useState<UserType[]>(mockUsers);
   const [newUserEmail, setNewUserEmail] = useState('');
   const [newUserPassword, setNewUserPassword] = useState('');
-  const [newUserRole, setNewUserRole] = useState<'admin' | 'organization'>('organization');
+  const [newUserRole, setNewUserRole] = useState<UserRole>('company_admin');
+  
+  // تحقق مما إذا كان المستخدم هو مسؤول
+  const isAdmin = currentUser?.role === 'super_admin' || currentUser?.role === 'company_admin';
   
   const handleSaveCredentials = () => {
     if (!adminPassword) {
@@ -83,6 +87,8 @@ const AuthenticationTab: React.FC<AuthenticationTabProps> = ({ onSaveCredentials
       email: newUserEmail,
       password: newUserPassword,
       role: newUserRole,
+      active: true,
+      createdAt: new Date().toISOString()
     };
     
     setUsers([...users, newUser]);
@@ -237,10 +243,11 @@ const AuthenticationTab: React.FC<AuthenticationTabProps> = ({ onSaveCredentials
                   id="new-user-role"
                   className="w-full border border-gray-300 rounded-md px-3 py-2"
                   value={newUserRole}
-                  onChange={(e) => setNewUserRole(e.target.value as 'admin' | 'organization')}
+                  onChange={(e) => setNewUserRole(e.target.value as UserRole)}
                 >
-                  <option value="admin">{t('admin')}</option>
-                  <option value="organization">{t('organization')}</option>
+                  <option value="company_admin">{t('admin')}</option>
+                  <option value="editor">{t('editor')}</option>
+                  <option value="viewer">{t('viewer')}</option>
                 </select>
               </div>
             </div>
