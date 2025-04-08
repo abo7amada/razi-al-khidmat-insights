@@ -16,9 +16,16 @@ const SurveyPage = () => {
     navigate(`/survey-creator?edit=${surveyId}`);
   };
   
+  const handleViewResponses = (surveyId: string) => {
+    navigate(`/reports?survey=${surveyId}`);
+  };
+  
   return (
     <Layout currentPage="survey">
-      <SurveyList onCreateNew={handleCreateNew} onEdit={handleEdit} />
+      <SurveyList 
+        onCreateNew={handleCreateNew} 
+        onEdit={handleEdit} 
+      />
     </Layout>
   );
 };

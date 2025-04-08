@@ -41,29 +41,30 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ onSelectLocation, s
     : t('selectLocation');
 
   const handleSelect = (locationId: string) => {
+    if (!locationId) return;
+    
     setSelected(locationId);
     onSelectLocation(locationId);
     setOpen(false);
-    toast({
-      title: t('locationSelected'),
-      description: locations.find(loc => loc.id === locationId) 
-        ? (language === 'ar' 
-            ? locations.find(loc => loc.id === locationId)?.nameAr 
-            : locations.find(loc => loc.id === locationId)?.nameEn)
-        : '',
-      duration: 3000,
-    });
+    
+    const location = locations.find(loc => loc.id === locationId);
+    if (location) {
+      toast({
+        title: t('locationSelected'),
+        description: language === 'ar' ? location.nameAr : location.nameEn,
+        duration: 3000,
+      });
+    }
   };
 
   // Filter locations based on search query
-  const filteredLocations = searchQuery 
-    ? locations.filter(location => {
-        const nameEn = location.nameEn.toLowerCase();
-        const nameAr = location.nameAr.toLowerCase();
-        const query = searchQuery.toLowerCase();
-        return nameEn.includes(query) || nameAr.includes(query);
-      })
-    : locations;
+  const filteredLocations = locations.filter(location => {
+    if (!searchQuery) return true;
+    const nameEn = location.nameEn.toLowerCase();
+    const nameAr = location.nameAr.toLowerCase();
+    const query = searchQuery.toLowerCase();
+    return nameEn.includes(query) || nameAr.includes(query);
+  });
 
   // Handle search query change with proper type safety
   const handleSearchChange = (value: string) => {
