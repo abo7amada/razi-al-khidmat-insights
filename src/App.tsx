@@ -29,6 +29,7 @@ import StatsPage from "./pages/StatsPage";
 import TemplateLibraryPage from "./pages/TemplateLibraryPage";
 import ManualEntryPage from "./pages/ManualEntryPage";
 import CommentsReportPage from "./pages/CommentsReportPage";
+import SiteBuilderPage from "./pages/SiteBuilderPage";
 
 // Import insights pages
 import InsightsLayout from "./components/insights/InsightsLayout";
@@ -109,6 +110,13 @@ const AppRoutes = () => {
       <Route path="/vendor-settings" element={
         <ProtectedRoute allowedRoles={['super_admin', 'system_admin']}>
           <VendorSettingsPage />
+        </ProtectedRoute>
+      } />
+      
+      {/* Site Builder */}
+      <Route path="/company/:id/site-builder" element={
+        <ProtectedRoute allowedRoles={['super_admin', 'system_admin', 'company_admin', 'company_owner']}>
+          <SiteBuilderPage />
         </ProtectedRoute>
       } />
       
