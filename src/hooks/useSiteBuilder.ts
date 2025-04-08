@@ -1,7 +1,15 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { CompanySite, SiteRow, SiteCol, SiteElement, SiteSchema } from '@/types/site-builder';
+import { 
+  CompanySite, 
+  SiteRow, 
+  SiteCol, 
+  SiteElement, 
+  SiteSchema, 
+  ElementType, 
+  defaultElementProps 
+} from '@/types/site-builder';
 import { mockCompanySites } from '@/types/site-builder';
 import { toast } from '@/hooks/use-toast';
 
@@ -162,7 +170,7 @@ export const useSiteBuilder = (companyId: string) => {
   };
 
   // Add a new element to a column
-  const addElement = (colId: string, type: ElementType, props: Record<string, any> = {}) => {
+  const addElement = (colId: string, type: ElementType) => {
     if (!schema) return;
     
     const colElements = schema.elements.filter(elem => elem.colId === colId);
@@ -171,7 +179,7 @@ export const useSiteBuilder = (companyId: string) => {
       id: `elem_${Date.now()}`,
       colId,
       type,
-      props,
+      props: defaultElementProps[type],
       order: colElements.length + 1,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

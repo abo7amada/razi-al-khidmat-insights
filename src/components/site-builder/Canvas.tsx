@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useDrop } from 'react-dnd';
-import { ElementType, SiteSchema, SiteRow, SiteCol, SiteElement } from '@/types/site-builder';
+import { ElementType, SiteSchema, SiteRow, SiteCol, SiteElement as SiteElementType } from '@/types/site-builder';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
@@ -79,7 +79,7 @@ const Canvas: React.FC<CanvasProps> = ({
 interface RowProps {
   row: SiteRow;
   columns: SiteCol[];
-  elements: SiteElement[];
+  elements: SiteElementType[];
   onAddColumn: (width: number) => void;
   onAddElement: (colId: string, type: ElementType) => void;
   onUpdateElement: (elementId: string, props: Record<string, any>) => void;
@@ -137,7 +137,7 @@ const Row: React.FC<RowProps> = ({
 
 interface ColumnProps {
   column: SiteCol;
-  elements: SiteElement[];
+  elements: SiteElementType[];
   onAddElement: (type: ElementType) => void;
   onUpdateElement: (elementId: string, props: Record<string, any>) => void;
   onDeleteElement: (elementId: string) => void;

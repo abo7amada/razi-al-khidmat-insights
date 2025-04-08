@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { SiteElement as SiteElementType } from '@/types/site-builder';
+import { SiteElement as SiteElementType, defaultElementProps } from '@/types/site-builder';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Trash2, Settings } from 'lucide-react';
@@ -28,19 +28,19 @@ const SiteElement: React.FC<SiteElementProps> = ({
   const renderElement = () => {
     switch (element.type) {
       case 'Logo':
-        return <LogoElement props={element.props} onUpdate={onUpdate} editMode={editMode} />;
+        return <LogoElement props={{...defaultElementProps.Logo, ...element.props}} onUpdate={onUpdate} editMode={editMode} />;
       case 'Text':
-        return <TextElement props={element.props} onUpdate={onUpdate} editMode={editMode} />;
+        return <TextElement props={{...defaultElementProps.Text, ...element.props}} onUpdate={onUpdate} editMode={editMode} />;
       case 'Image':
-        return <ImageElement props={element.props} onUpdate={onUpdate} editMode={editMode} />;
+        return <ImageElement props={{...defaultElementProps.Image, ...element.props}} onUpdate={onUpdate} editMode={editMode} />;
       case 'Icon':
-        return <IconElement props={element.props} onUpdate={onUpdate} editMode={editMode} />;
+        return <IconElement props={{...defaultElementProps.Icon, ...element.props}} onUpdate={onUpdate} editMode={editMode} />;
       case 'Contact':
-        return <ContactElement props={element.props} onUpdate={onUpdate} editMode={editMode} />;
+        return <ContactElement props={{...defaultElementProps.Contact, ...element.props}} onUpdate={onUpdate} editMode={editMode} />;
       case 'SurveyEmbed':
-        return <SurveyEmbedElement props={element.props} onUpdate={onUpdate} editMode={editMode} />;
+        return <SurveyEmbedElement props={{...defaultElementProps.SurveyEmbed, ...element.props}} onUpdate={onUpdate} editMode={editMode} />;
       case 'Button':
-        return <ButtonElement props={element.props} onUpdate={onUpdate} editMode={editMode} />;
+        return <ButtonElement props={{...defaultElementProps.Button, ...element.props}} onUpdate={onUpdate} editMode={editMode} />;
       default:
         return <div>Unknown element type: {element.type}</div>;
     }
