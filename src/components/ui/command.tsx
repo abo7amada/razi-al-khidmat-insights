@@ -43,10 +43,10 @@ const CommandInput = React.forwardRef<
     onValueChange?: (value: string) => void;
   }
 >(({ className, value, onValueChange, ...props }, ref) => {
-  // Ensure value is always a string
-  const safeValue = value === undefined || value === null ? "" : value;
+  // Ensure value is always a string, never undefined
+  const safeValue = value === undefined || value === null ? "" : String(value);
   
-  // Create a safe onValueChange handler
+  // Create a stable callback that properly handles undefined values
   const handleValueChange = React.useCallback(
     (newValue: string) => {
       if (onValueChange) {
