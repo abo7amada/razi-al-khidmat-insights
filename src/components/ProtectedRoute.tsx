@@ -25,7 +25,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // التحقق من أدوار المستخدم إذا كانت محددة
   if (allowedRoles && allowedRoles.length > 0) {
-    if (!allowedRoles.includes(currentUser.role)) {
+    const hasAllowedRole = allowedRoles.includes(currentUser.role);
+    // Super admin always has access to all routes regardless of role restrictions
+    if (!hasAllowedRole && !isSuperAdmin) {
       // إذا لم يكن للمستخدم دور مسموح به، قم بتوجيهه إلى صفحة غير مصرح بها
       return <Navigate to="/unauthorized" replace />;
     }
@@ -33,6 +35,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // تجاوز التحقق من الاشتراك للمستخدمين super_admin
   if (requireActiveSubscription && !isSuperAdmin) {
+    // Super admin always bypasses subscription check
     if (!userOrganization?.active) {
       // إذا كان الاشتراك غير نشط، قم بتوجيهه إلى صفحة تجديد الاشتراك
       return <Navigate to="/subscription-expired" replace />;
