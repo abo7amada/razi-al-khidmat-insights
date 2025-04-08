@@ -28,6 +28,7 @@ import ComplaintsPage from "./pages/ComplaintsPage";
 import StatsPage from "./pages/StatsPage";
 import TemplateLibraryPage from "./pages/TemplateLibraryPage";
 import ManualEntryPage from "./pages/ManualEntryPage";
+import CommentsReportPage from "./pages/CommentsReportPage";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
@@ -125,6 +126,12 @@ const AppRoutes = () => {
       <Route path="/company/:id/manual-entry" element={
         <ProtectedRoute allowedRoles={['super_admin', 'system_admin', 'company_admin', 'company_owner', 'editor', 'branchManager']}>
           <ManualEntryPage />
+        </ProtectedRoute>
+      } />
+      {/* New Comments Report Page */}
+      <Route path="/company/:id/reports/comments" element={
+        <ProtectedRoute allowedRoles={['super_admin', 'system_admin', 'company_admin', 'company_owner', 'editor', 'viewer', 'branchManager']}>
+          <CommentsReportPage />
         </ProtectedRoute>
       } />
       
