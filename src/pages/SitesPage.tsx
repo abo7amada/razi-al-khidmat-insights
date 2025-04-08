@@ -9,11 +9,17 @@ import { useBranches } from '@/hooks/useBranches';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { MapPin, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Navigate } from 'react-router-dom';
 
 const SitesPage = () => {
   const { t, language } = useLanguage();
-  const { currentCompany, userOrganization } = useAuth();
+  const { currentCompany, userOrganization, isSuperAdmin } = useAuth();
   const [showAddDialog, setShowAddDialog] = useState(false);
+  
+  // إذا كان المستخدم هو السوبر أدمن، قم بإعادة توجيهه إلى الصفحة الرئيسية
+  if (isSuperAdmin) {
+    return <Navigate to="/admin" replace />;
+  }
   
   // Use either the currentCompany id or the userOrganization id
   const companyId = currentCompany?.id || userOrganization?.id;
@@ -33,7 +39,7 @@ const SitesPage = () => {
           {branches.length === 0 && !isLoading && (
             <Button onClick={handleAddSite}>
               <PlusCircle className="h-4 w-4 mr-2" />
-              {language === 'ar' ? 'إضافة فرع جديد' : 'Add New Site'}
+              {language === 'ar' ? 'إضافة موقع جديد' : 'Add New Site'}
             </Button>
           )}
         </CardHeader>
@@ -50,7 +56,7 @@ const SitesPage = () => {
               <div className="flex justify-center mt-4">
                 <Button onClick={handleAddSite}>
                   <PlusCircle className="h-4 w-4 mr-2" />
-                  {language === 'ar' ? 'إضافة فرع جديد' : 'Add New Site'}
+                  {language === 'ar' ? 'إضافة موقع جديد' : 'Add New Site'}
                 </Button>
               </div>
             </div>

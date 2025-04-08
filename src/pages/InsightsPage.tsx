@@ -2,13 +2,21 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 
 const InsightsPage = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id?: string }>();
   const { t, language } = useLanguage();
+  const { isSuperAdmin } = useAuth();
   
   useEffect(() => {
+    // إذا كان المستخدم هو السوبر أدمن، قم بإعادة توجيهه إلى الصفحة الرئيسية
+    if (isSuperAdmin) {
+      navigate('/admin');
+      return;
+    }
+    
     // If we have a company ID, redirect to the insights overview page
     if (id) {
       navigate(`/company/${id}/insights/overview`);
@@ -19,7 +27,7 @@ const InsightsPage = () => {
       // 3. Redirect to the first insights page
       navigate('/'); // For now, just redirect to home
     }
-  }, [id, navigate]);
+  }, [id, navigate, isSuperAdmin]);
   
   return <div>{language === 'ar' ? 'جاري التحويل...' : 'Redirecting...'}</div>;
 };

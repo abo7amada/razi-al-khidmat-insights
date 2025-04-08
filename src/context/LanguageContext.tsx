@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
 type Language = 'ar' | 'en';
@@ -230,6 +231,10 @@ const translations: Translations = {
   locations: {
     ar: 'المواقع',
     en: 'Locations',
+  },
+  sites: {
+    ar: 'المواقع',
+    en: 'Sites',
   },
   shareSurvey: {
     ar: 'مشاركة الاستبيان',
