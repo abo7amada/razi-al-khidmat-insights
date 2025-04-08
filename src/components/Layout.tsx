@@ -1,4 +1,3 @@
-
 import React, { ReactNode } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
@@ -179,7 +178,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                           <SidebarMenuButton asChild className={currentPage === 'sites' ? 'bg-accent' : ''}>
                             <a href="/sites">
                               <Store className="h-4 w-4" />
-                              <span>{t('locations')}</span>
+                              <span>{language === 'ar' ? 'المواقع' : 'Locations'}</span>
                             </a>
                           </SidebarMenuButton>
                         </SidebarMenuItem>
@@ -214,7 +213,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                   {currentPage === 'analytics' && t('analytics')}
                   {currentPage === 'insights' && t('insights')}
                   {currentPage === 'users' && t('users')}
-                  {currentPage === 'sites' && t('locations')}
+                  {currentPage === 'sites' && (language === 'ar' ? 'المواقع' : 'Locations')}
                   {currentPage === 'vendor-settings' && t('vendorSettings')}
                   {currentPage === 'companies' && 'إدارة الشركات'}
                 </h1>

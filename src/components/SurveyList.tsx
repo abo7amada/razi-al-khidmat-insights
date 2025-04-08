@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { mockSurveys } from '../data/mockSurveys';
@@ -21,6 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { useAuth } from '../context/AuthContext';
 
 interface SurveyListProps {
   onCreateNew: () => void;
@@ -30,9 +30,15 @@ interface SurveyListProps {
 const SurveyList: React.FC<SurveyListProps> = ({ onCreateNew, onEdit }) => {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const dateLocale = language === 'ar' ? ar : enUS;
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const [surveyToDelete, setSurveyToDelete] = React.useState<string | null>(null);
+  
+  // Filter surveys based on the current user's company if applicable
+  const filteredSurveys = currentUser?.companyId 
+    ? mockSurveys.filter(survey => survey.companyId === currentUser.companyId)
+    : mockSurveys;
   
   const handleDelete = (surveyId: string) => {
     setSurveyToDelete(surveyId);
@@ -68,61 +74,67 @@ const SurveyList: React.FC<SurveyListProps> = ({ onCreateNew, onEdit }) => {
           <Button onClick={onCreateNew}>{t('createNewSurvey')}</Button>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('surveyTitle')}</TableHead>
-                <TableHead>{t('createdOn')}</TableHead>
-                <TableHead>{t('status')}</TableHead>
-                <TableHead>{t('responses')}</TableHead>
-                <TableHead className="text-right">{t('options')}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {mockSurveys.map((survey) => (
-                <TableRow key={survey.id}>
-                  <TableCell className="font-medium">{survey.title}</TableCell>
-                  <TableCell>
-                    {format(parseISO(survey.createdAt), 'PPP', { locale: dateLocale })}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={survey.status === 'active' ? 'default' : 'secondary'}>
-                      {survey.status === 'active' ? t('active') : t('inactive')}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{survey.responseCount}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        onClick={() => handleViewResponses(survey.id)}
-                        title={language === 'ar' ? 'عرض التقارير' : 'View Reports'}
-                      >
-                        <BarChart3 className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        onClick={() => onEdit(survey.id)}
-                        title={language === 'ar' ? 'تعديل' : 'Edit'}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        onClick={() => handleDelete(survey.id)}
-                        title={language === 'ar' ? 'حذف' : 'Delete'}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+          {filteredSurveys.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              {language === 'ar' ? 'لا توجد استبيانات حالياً' : 'No surveys available'}
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('surveyTitle')}</TableHead>
+                  <TableHead>{t('createdOn')}</TableHead>
+                  <TableHead>{t('status')}</TableHead>
+                  <TableHead>{t('responses')}</TableHead>
+                  <TableHead className="text-right">{t('options')}</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredSurveys.map((survey) => (
+                  <TableRow key={survey.id}>
+                    <TableCell className="font-medium">{survey.title}</TableCell>
+                    <TableCell>
+                      {format(parseISO(survey.createdAt), 'PPP', { locale: dateLocale })}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={survey.status === 'active' ? 'default' : 'secondary'}>
+                        {survey.status === 'active' ? t('active') : t('inactive')}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{survey.responseCount}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          onClick={() => handleViewResponses(survey.id)}
+                          title={language === 'ar' ? 'عرض التقارير' : 'View Reports'}
+                        >
+                          <BarChart3 className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          onClick={() => onEdit(survey.id)}
+                          title={language === 'ar' ? 'تعديل' : 'Edit'}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          onClick={() => handleDelete(survey.id)}
+                          title={language === 'ar' ? 'حذف' : 'Delete'}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
       
