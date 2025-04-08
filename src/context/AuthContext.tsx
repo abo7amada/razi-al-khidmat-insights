@@ -12,6 +12,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   userRole: UserRole | null;
   userOrganization: Organization | null;
+  currentCompany: { id: string } | null; // Added this property
   checkAuth: () => void;
   isUserInRole: (roles: UserRole[]) => boolean;
   isSuperAdmin: boolean;
@@ -30,6 +31,7 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   userRole: null,
   userOrganization: null,
+  currentCompany: null, // Added this property to the default context value
   checkAuth: () => {},
   isUserInRole: () => false,
   isSuperAdmin: false,
@@ -131,6 +133,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
   // خاصية للتحقق مما إذا كان المستخدم مسؤولًا بأي شكل
   const isAdmin = isSuperAdmin || isSystemAdmin || isCompanyAdmin || isCompanyOwner;
+  
+  // Set current company from the user organization
+  const currentCompany = userOrganization ? { id: userOrganization.id } : null;
 
   return (
     <AuthContext.Provider 
@@ -141,6 +146,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated,
         userRole: currentUser?.role || null,
         userOrganization,
+        currentCompany, // Added this property to the context value
         checkAuth,
         isUserInRole,
         isSuperAdmin,

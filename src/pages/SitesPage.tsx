@@ -8,7 +8,10 @@ import { useAuth } from '../context/AuthContext';
 
 const SitesPage = () => {
   const { t } = useLanguage();
-  const { currentCompany } = useAuth();
+  const { currentCompany, userOrganization } = useAuth();
+  
+  // Use either the currentCompany id or the userOrganization id
+  const companyId = currentCompany?.id || userOrganization?.id;
   
   return (
     <Layout currentPage="sites">
@@ -17,7 +20,7 @@ const SitesPage = () => {
           <CardTitle>{t('sitesManagement')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <SiteManagement companyId={currentCompany?.id} />
+          <SiteManagement companyId={companyId} />
         </CardContent>
       </Card>
     </Layout>

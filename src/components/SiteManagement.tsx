@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
@@ -38,13 +39,19 @@ import {
   Search
 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { useBranches } from '@/hooks/useBranches';
 
-const SiteManagement = () => {
+interface SiteManagementProps {
+  companyId?: string;
+}
+
+const SiteManagement: React.FC<SiteManagementProps> = ({ companyId }) => {
   const { t, language } = useLanguage();
-  const { currentUser, userOrganization } = useAuth();
+  const { userOrganization } = useAuth();
   const { toast } = useToast();
+  const { data: branchSites = [] } = useBranches(companyId || userOrganization?.id || '');
   
-  const [sites, setSites] = useState<Site[]>(mockSites.filter(site => site.companyId === userOrganization?.id));
+  const [sites, setSites] = useState<Site[]>(mockSites.filter(site => site.companyId === (companyId || userOrganization?.id)));
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -69,7 +76,9 @@ const SiteManagement = () => {
   );
 
   const handleAddSite = () => {
-    if (!userOrganization) {
+    const effectiveCompanyId = companyId || userOrganization?.id;
+    
+    if (!effectiveCompanyId) {
       toast({
         title: language === 'ar' ? 'خطأ' : 'Error',
         description: language === 'ar' ? 'لا يمكن إضافة فرع. المؤسسة غير محددة.' : 'Cannot add site. Organization not specified.',
@@ -91,7 +100,7 @@ const SiteManagement = () => {
     // Create new site
     const createdSite: Site = {
       id: `site${sites.length + 1}`,
-      companyId: userOrganization.id,
+      companyId: effectiveCompanyId,
       name: newSite.name,
       nameAr: newSite.nameAr,
       nameEn: newSite.nameEn,
