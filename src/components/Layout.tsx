@@ -3,12 +3,12 @@ import React, { ReactNode } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { BarChart3, FileText, Home, FilePlus, Users } from 'lucide-react';
+import { BarChart3, FileText, Home, FilePlus, Users, MapPin } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
 
 interface LayoutProps {
   children: ReactNode;
-  currentPage: 'dashboard' | 'survey' | 'reports' | 'survey-creator' | 'analytics' | 'users';
+  currentPage: 'dashboard' | 'survey' | 'reports' | 'survey-creator' | 'analytics' | 'users' | 'locations';
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
@@ -76,6 +76,14 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                         </a>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild className={currentPage === 'locations' ? 'bg-accent' : ''}>
+                        <a href="/locations">
+                          <MapPin className="h-4 w-4" />
+                          <span>{t('locations')}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                   </SidebarMenu>
                 </SidebarGroupContent>
               </SidebarGroup>
@@ -93,6 +101,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                   {currentPage === 'survey-creator' && t('surveyCreator')}
                   {currentPage === 'analytics' && t('analytics')}
                   {currentPage === 'users' && t('users')}
+                  {currentPage === 'locations' && t('locations')}
                 </h1>
               </div>
               <div className="flex items-center">

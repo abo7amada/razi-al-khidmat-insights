@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import SurveyCreatorPage from "./pages/SurveyCreatorPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import UsersPage from "./pages/UsersPage";
+import LocationsPage from "./pages/LocationsPage";
 import { LanguageProvider } from "./context/LanguageContext";
 
 // Create a new QueryClient instance
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/survey-creator" element={<SurveyCreatorPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
             <Route path="/users" element={<UsersPage />} />
+            <Route path="/locations" element={<LocationsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
