@@ -3,12 +3,11 @@ import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
-import { Settings, Key, UserPlus, Lock, Save, CreditCard } from 'lucide-react';
+import { Settings, Key, UserPlus, Lock, Save } from 'lucide-react';
 import OrganizationsTab from './vendor-settings/OrganizationsTab';
 import GeneralTab from './vendor-settings/GeneralTab';
 import AppearanceTab from './vendor-settings/AppearanceTab';
 import AuthenticationTab from './vendor-settings/AuthenticationTab';
-import PricingTab from './vendor-settings/PricingTab';
 import { mockOrganizations } from './vendor-settings/types';
 
 const VendorSettings: React.FC = () => {
@@ -31,13 +30,6 @@ const VendorSettings: React.FC = () => {
       description: t('credentialsSaved'),
     });
   };
-  
-  const handleSavePricing = () => {
-    toast({
-      title: t('settingsSaved'),
-      description: t('pricingSettingsSaved'),
-    });
-  };
 
   return (
     <div className="space-y-6">
@@ -49,12 +41,11 @@ const VendorSettings: React.FC = () => {
       </div>
 
       <Tabs defaultValue="organizations">
-        <TabsList className="grid w-full md:w-auto grid-cols-1 md:grid-cols-5">
+        <TabsList className="grid w-full md:w-auto grid-cols-1 md:grid-cols-4">
           <TabsTrigger value="organizations">{t('organizations')}</TabsTrigger>
           <TabsTrigger value="general">{t('general')}</TabsTrigger>
           <TabsTrigger value="appearance">{t('appearance')}</TabsTrigger>
           <TabsTrigger value="authentication">{t('authentication')}</TabsTrigger>
-          <TabsTrigger value="pricing">{t('pricing')}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="organizations" className="mt-4 space-y-4">
@@ -75,10 +66,6 @@ const VendorSettings: React.FC = () => {
         
         <TabsContent value="authentication" className="mt-4">
           <AuthenticationTab onSaveCredentials={handleSaveCredentials} />
-        </TabsContent>
-        
-        <TabsContent value="pricing" className="mt-4">
-          <PricingTab onSave={handleSavePricing} />
         </TabsContent>
       </Tabs>
     </div>

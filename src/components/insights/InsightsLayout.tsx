@@ -29,7 +29,7 @@ import { Button } from '../ui/button';
 
 const InsightsLayout: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname.split('/').pop();
@@ -48,14 +48,10 @@ const InsightsLayout: React.FC = () => {
     navigate(`/company/${id}/insights/${path}`);
   };
 
-  const getInsightsTitle = () => {
-    return language === 'ar' ? 'التحليلات والرؤى' : 'Insights';
-  };
-
   return (
     <Layout currentPage="insights">
       <div className="container mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-6">{getInsightsTitle()}</h1>
+        <h1 className="text-3xl font-bold mb-6">{t('insights')}</h1>
         
         <div className="mb-6">
           <NavigationMenu>

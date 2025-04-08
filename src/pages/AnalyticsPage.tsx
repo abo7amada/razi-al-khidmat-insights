@@ -7,18 +7,10 @@ import KPIStats from '../components/KPIStats';
 import APIIntegration from '../components/APIIntegration';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLanguage } from '../context/LanguageContext';
-import { useAuth } from '../context/AuthContext';
-import { Navigate } from 'react-router-dom';
 
 const AnalyticsPage = () => {
   const { t, language } = useLanguage();
-  const { isSuperAdmin } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
-  
-  // إذا كان المستخدم هو السوبر أدمن، قم بإعادة توجيهه إلى الصفحة الرئيسية
-  if (isSuperAdmin) {
-    return <Navigate to="/admin" replace />;
-  }
 
   return (
     <Layout currentPage="analytics">

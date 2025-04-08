@@ -73,7 +73,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                   </h2>
                 )}
                 
-                {isSubscriptionExpired && !isSuperAdmin && (
+                {isSubscriptionExpired && (
                   <div className="mt-2">
                     <Badge variant="destructive" className="w-full py-1 flex items-center justify-center">
                       <AlertTriangle className="h-3 w-3 mr-1" />
@@ -82,7 +82,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                   </div>
                 )}
                 
-                {isNearExpiry && !isSubscriptionExpired && !isSuperAdmin && (
+                {isNearExpiry && !isSubscriptionExpired && (
                   <div className="mt-2">
                     <Badge variant="outline" className="w-full py-1 flex items-center justify-center text-amber-600 border-amber-600">
                       <AlertTriangle className="h-3 w-3 mr-1" />
@@ -116,75 +116,70 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                       </>
                     )}
 
-                    {!isSuperAdmin && (
-                      <>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton asChild className={currentPage === 'dashboard' ? 'bg-accent' : ''}>
-                            <a href="/">
-                              <Home className="h-4 w-4" />
-                              <span>{t('dashboard')}</span>
-                            </a>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton asChild className={currentPage === 'survey-creator' ? 'bg-accent' : ''}>
-                            <a href="/survey-creator">
-                              <FilePlus className="h-4 w-4" />
-                              <span>{t('surveyCreator')}</span>
-                            </a>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton asChild className={currentPage === 'survey' ? 'bg-accent' : ''}>
-                            <a href="/survey">
-                              <FileText className="h-4 w-4" />
-                              <span>{t('survey')}</span>
-                            </a>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton asChild className={currentPage === 'reports' ? 'bg-accent' : ''}>
-                            <a href="/reports">
-                              <BarChart3 className="h-4 w-4" />
-                              <span>{t('reports')}</span>
-                            </a>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton asChild className={currentPage === 'analytics' ? 'bg-accent' : ''}>
-                            <a href="/analytics">
-                              <BarChart3 className="h-4 w-4" />
-                              <span>{t('analytics')}</span>
-                            </a>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton asChild className={currentPage === 'insights' ? 'bg-accent' : ''}>
-                            <a href="/insights">
-                              <LineChart className="h-4 w-4" />
-                              <span>{t('insights')}</span>
-                            </a>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton asChild className={currentPage === 'users' ? 'bg-accent' : ''}>
-                            <a href="/users">
-                              <Users className="h-4 w-4" />
-                              <span>{t('users')}</span>
-                            </a>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton asChild className={currentPage === 'sites' ? 'bg-accent' : ''}>
-                            <a href="/sites">
-                              <Store className="h-4 w-4" />
-                              <span>{language === 'ar' ? 'المواقع' : 'Locations'}</span>
-                            </a>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      </>
-                    )}
-                    
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild className={currentPage === 'dashboard' ? 'bg-accent' : ''}>
+                        <a href="/">
+                          <Home className="h-4 w-4" />
+                          <span>{t('dashboard')}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild className={currentPage === 'survey-creator' ? 'bg-accent' : ''}>
+                        <a href="/survey-creator">
+                          <FilePlus className="h-4 w-4" />
+                          <span>{t('surveyCreator')}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild className={currentPage === 'survey' ? 'bg-accent' : ''}>
+                        <a href="/survey">
+                          <FileText className="h-4 w-4" />
+                          <span>{t('survey')}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild className={currentPage === 'reports' ? 'bg-accent' : ''}>
+                        <a href="/reports">
+                          <BarChart3 className="h-4 w-4" />
+                          <span>{t('reports')}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild className={currentPage === 'analytics' ? 'bg-accent' : ''}>
+                        <a href="/analytics">
+                          <BarChart3 className="h-4 w-4" />
+                          <span>{t('analytics')}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild className={currentPage === 'insights' ? 'bg-accent' : ''}>
+                        <a href="/insights">
+                          <LineChart className="h-4 w-4" />
+                          <span>{t('insights')}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild className={currentPage === 'users' ? 'bg-accent' : ''}>
+                        <a href="/users">
+                          <Users className="h-4 w-4" />
+                          <span>{t('users')}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild className={currentPage === 'sites' ? 'bg-accent' : ''}>
+                        <a href="/sites">
+                          <Store className="h-4 w-4" />
+                          <span>{t('sites')}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                     {isSuperAdmin && (
                       <SidebarMenuItem>
                         <SidebarMenuButton asChild className={currentPage === 'vendor-settings' ? 'bg-accent' : ''}>
@@ -213,7 +208,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                   {currentPage === 'analytics' && t('analytics')}
                   {currentPage === 'insights' && t('insights')}
                   {currentPage === 'users' && t('users')}
-                  {currentPage === 'sites' && (language === 'ar' ? 'المواقع' : 'Locations')}
+                  {currentPage === 'sites' && t('sites')}
                   {currentPage === 'vendor-settings' && t('vendorSettings')}
                   {currentPage === 'companies' && 'إدارة الشركات'}
                 </h1>
@@ -221,7 +216,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
               <div className="flex items-center gap-2">
                 <LanguageSwitcher />
                 
-                {isSubscriptionExpired && !isSuperAdmin && (
+                {isSubscriptionExpired && (
                   <Button size="sm" variant="destructive" onClick={() => navigate('/subscription-expired')}>
                     <AlertTriangle className="mr-1 h-4 w-4" /> انتهى الاشتراك
                   </Button>

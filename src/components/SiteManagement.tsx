@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { Site, mockSites } from '../types/company';
@@ -42,18 +43,16 @@ import { useBranches } from '@/hooks/useBranches';
 
 interface SiteManagementProps {
   companyId?: string;
-  showAddDialog?: boolean;
-  setShowAddDialog?: (show: boolean) => void;
 }
 
-const SiteManagement: React.FC<SiteManagementProps> = ({ companyId, showAddDialog = false, setShowAddDialog }) => {
+const SiteManagement: React.FC<SiteManagementProps> = ({ companyId }) => {
   const { t, language } = useLanguage();
-  const { currentCompany, userOrganization, isSuperAdmin } = useAuth();
+  const { userOrganization } = useAuth();
   const { toast } = useToast();
   const { data: branchSites = [] } = useBranches(companyId || userOrganization?.id || '');
   
   const [sites, setSites] = useState<Site[]>(mockSites.filter(site => site.companyId === (companyId || userOrganization?.id)));
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(showAddDialog);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [currentSite, setCurrentSite] = useState<Site | null>(null);
@@ -68,21 +67,7 @@ const SiteManagement: React.FC<SiteManagementProps> = ({ companyId, showAddDialo
     isActive: true
   });
 
-  // تحديث حالة إضافة موقع جديد عند تغيير قيمة showAddDialog
-  useEffect(() => {
-    if (showAddDialog !== undefined) {
-      setIsAddDialogOpen(showAddDialog);
-    }
-  }, [showAddDialog]);
-
-  // إبلاغ الكومبوننت الأصلي عند إغلاق مربع حوار الإضافة
-  useEffect(() => {
-    if (setShowAddDialog && isAddDialogOpen !== showAddDialog) {
-      setShowAddDialog(isAddDialogOpen);
-    }
-  }, [isAddDialogOpen, showAddDialog, setShowAddDialog]);
-
-  // تصفية المواقع بناء على مصطلح البحث
+  // Filter sites based on search term
   const filteredSites = sites.filter(site => 
     site.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     site.address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -102,7 +87,7 @@ const SiteManagement: React.FC<SiteManagementProps> = ({ companyId, showAddDialo
       return;
     }
 
-    // التحقق من الحقول المطلوبة
+    // Validate required fields
     if (!newSite.name) {
       toast({
         title: language === 'ar' ? 'خطأ' : 'Error',
@@ -112,24 +97,24 @@ const SiteManagement: React.FC<SiteManagementProps> = ({ companyId, showAddDialo
       return;
     }
     
-    // إنشاء موقع جديد
+    // Create new site
     const createdSite: Site = {
-      id: `site${Date.now()}`, // استخدام الطابع الزمني لضمان الفرادة
+      id: `site${sites.length + 1}`,
       companyId: effectiveCompanyId,
       name: newSite.name,
-      nameAr: newSite.nameAr || newSite.name,
-      nameEn: newSite.nameEn || newSite.name,
-      address: newSite.address || '',
-      city: newSite.city || '',
-      phone: newSite.phone || '',
+      nameAr: newSite.nameAr,
+      nameEn: newSite.nameEn,
+      address: newSite.address,
+      city: newSite.city,
+      phone: newSite.phone,
       isActive: newSite.isActive || true,
       createdAt: new Date().toISOString()
     };
     
-    // إضافة إلى قائمة المواقع
+    // Add to sites list
     setSites([...sites, createdSite]);
     
-    // إعادة تعيين النموذج وإغلاق مربع الحوار
+    // Reset form and close dialog
     setNewSite({
       name: '',
       nameAr: '',
@@ -141,7 +126,7 @@ const SiteManagement: React.FC<SiteManagementProps> = ({ companyId, showAddDialo
     });
     setIsAddDialogOpen(false);
     
-    // عرض رسالة نجاح
+    // Show success message
     toast({
       title: language === 'ar' ? 'تمت الإضافة' : 'Site Added',
       description: language === 'ar' ? 'تم إضافة الفرع بنجاح.' : 'Site has been added successfully.',
@@ -212,14 +197,13 @@ const SiteManagement: React.FC<SiteManagementProps> = ({ companyId, showAddDialo
     setIsDeleteDialogOpen(true);
   };
 
-  // تحقق مما إذا كان الاشتراك نشطًا للسماح بإضافة مواقع
-  // السوبر أدمن يمكنه دائمًا إضافة المواقع بغض النظر عن حالة الاشتراك
-  const canAddSites = isSuperAdmin || userOrganization?.active;
+  // Check if subscription is active to allow adding sites
+  const canAddSites = userOrganization?.active ?? false;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between gap-4">
-        {/* البحث */}
+        {/* Search */}
         <div className="relative w-full md:w-64">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -230,10 +214,10 @@ const SiteManagement: React.FC<SiteManagementProps> = ({ companyId, showAddDialo
           />
         </div>
         
-        {/* زر إضافة فرع جديد */}
+        {/* Add Site Button */}
         <Button
           onClick={() => setIsAddDialogOpen(true)}
-          disabled={!canAddSites && !isSuperAdmin}
+          disabled={!canAddSites}
           className="flex items-center gap-1"
         >
           <PlusCircle className="h-4 w-4 mr-1" />
@@ -241,7 +225,7 @@ const SiteManagement: React.FC<SiteManagementProps> = ({ companyId, showAddDialo
         </Button>
       </div>
 
-      {/* جدول المواقع */}
+      {/* Sites Table */}
       <div className="border rounded-lg overflow-hidden">
         <Table>
           <TableHeader>
@@ -322,7 +306,7 @@ const SiteManagement: React.FC<SiteManagementProps> = ({ companyId, showAddDialo
         </Table>
       </div>
 
-      {/* مربع حوار إضافة موقع */}
+      {/* Add Site Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

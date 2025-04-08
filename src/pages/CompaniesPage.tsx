@@ -4,10 +4,8 @@ import Layout from '../components/Layout';
 import CompanyManagement from '../components/super-admin/CompanyManagement';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '../context/AuthContext';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import ProtectedRoute from '../components/ProtectedRoute';
-import { Button } from '@/components/ui/button';
-import { Settings } from 'lucide-react';
 
 const CompaniesPage = () => {
   const { canManageCompanies } = useAuth();
@@ -19,15 +17,6 @@ const CompaniesPage = () => {
   return (
     <ProtectedRoute allowedRoles={['super_admin', 'system_admin', 'admin']}>
       <Layout currentPage="companies">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">إدارة الشركات</h1>
-          <Button asChild variant="outline">
-            <Link to="/vendor-settings">
-              <Settings className="w-4 h-4 ml-2" />
-              إعدادات البائع
-            </Link>
-          </Button>
-        </div>
         <Card>
           <CardHeader>
             <CardTitle>إدارة الشركات</CardTitle>
