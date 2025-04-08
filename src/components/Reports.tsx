@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,10 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { mockSatisfactionData, locations } from '../data/mockData';
 import LocationSelector from './LocationSelector';
-import { Download, FileSpreadsheet, FilePdf } from 'lucide-react';
+import { Download, FileText, Calendar as CalendarIcon } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
-import { Calendar as CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
@@ -18,6 +15,7 @@ import {
 } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { ar, enUS } from "date-fns/locale";
+import { Calendar } from "@/components/ui/calendar";
 
 const Reports: React.FC = () => {
   const { t, language, dir } = useLanguage();
@@ -279,11 +277,11 @@ const Reports: React.FC = () => {
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => handleExport('excel')}>
-              <FileSpreadsheet className="mr-2 h-4 w-4" />
+              <FileText className="mr-2 h-4 w-4" />
               {t('exportExcel')}
             </Button>
             <Button variant="outline" onClick={() => handleExport('pdf')}>
-              <FilePdf className="mr-2 h-4 w-4" />
+              <FileText className="mr-2 h-4 w-4" />
               {t('exportPDF')}
             </Button>
           </div>
