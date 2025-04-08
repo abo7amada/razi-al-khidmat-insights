@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { mockSatisfactionData, locations } from '../data/mockData';
 import LocationSelector from './LocationSelector';
-import { Download, FileText, Calendar as CalendarIcon } from 'lucide-react';
+import { Download, FileText, Calendar as CalendarIcon, BarChart, PieChart } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import {
   Popover,
@@ -28,6 +28,7 @@ const Reports: React.FC = () => {
     from: undefined,
     to: undefined,
   });
+  const [activeTab, setActiveTab] = useState("table");
   
   // Filter data by location and date if selected
   const filteredData = mockSatisfactionData.filter(item => {
@@ -74,6 +75,43 @@ const Reports: React.FC = () => {
     setSelectedLocationId(undefined);
     setDateRange({ from: undefined, to: undefined });
   };
+
+  // Calculate statistics
+  const totalRecords = filteredData.length;
+  const averageOverall = totalRecords > 0 
+    ? (filteredData.reduce((sum, item) => sum + item.overall, 0) / totalRecords).toFixed(2)
+    : '0';
+  const averageServiceQuality = totalRecords > 0
+    ? (filteredData.reduce((sum, item) => sum + item.serviceQuality, 0) / totalRecords).toFixed(2)
+    : '0';
+  const averageStaffBehavior = totalRecords > 0
+    ? (filteredData.reduce((sum, item) => sum + item.staffBehavior, 0) / totalRecords).toFixed(2)
+    : '0';
+  const averageWaitingTime = totalRecords > 0
+    ? (filteredData.reduce((sum, item) => sum + item.waitingTime, 0) / totalRecords).toFixed(2)
+    : '0';
+  const averageFacilities = totalRecords > 0
+    ? (filteredData.reduce((sum, item) => sum + item.facilities, 0) / totalRecords).toFixed(2)
+    : '0';
+
+  // Location statistics
+  const locationStats = locations.map(location => {
+    const count = filteredData.filter(item => {
+      if (location.type === 'headquarters') {
+        return item.location === 'headquarters';
+      } else {
+        return item.location === 'hospital' && 
+              (language === 'en' ? item.hospitalName === location.nameEn : item.hospitalName === location.nameAr);
+      }
+    }).length;
+    
+    return {
+      id: location.id,
+      name: language === 'ar' ? location.nameAr : location.nameEn,
+      count,
+      percentage: totalRecords > 0 ? ((count / totalRecords) * 100).toFixed(1) : '0'
+    };
+  });
 
   return (
     <div className="space-y-6">
@@ -141,11 +179,77 @@ const Reports: React.FC = () => {
               </Button>
             </div>
           </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <Card>
+              <CardContent className="p-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {language === 'ar' ? 'عدد التقييمات' : 'Total Reviews'}
+                  </p>
+                  <h3 className="text-2xl font-bold">{totalRecords}</h3>
+                </div>
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <BarChart className="h-5 w-5 text-primary" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {language === 'ar' ? 'متوسط الرضا' : 'Average Satisfaction'}
+                  </p>
+                  <h3 className="text-2xl font-bold">{averageOverall}/5</h3>
+                </div>
+                <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                  <PieChart className="h-5 w-5 text-green-600" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {language === 'ar' ? 'المواقع الممثلة' : 'Locations Covered'}
+                  </p>
+                  <h3 className="text-2xl font-bold">
+                    {locationStats.filter(stat => stat.count > 0).length}
+                  </h3>
+                </div>
+                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <PieChart className="h-5 w-5 text-blue-600" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {language === 'ar' ? 'آخر تحديث' : 'Last Updated'}
+                  </p>
+                  <h3 className="text-lg font-bold">
+                    {filteredData.length > 0 
+                      ? format(new Date(filteredData[0].date), "PPP", { locale: language === 'ar' ? ar : enUS })
+                      : '-'
+                    }
+                  </h3>
+                </div>
+                <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center">
+                  <CalendarIcon className="h-5 w-5 text-amber-600" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
           
-          <Tabs defaultValue="table">
+          <Tabs defaultValue="table" value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-4">
               <TabsTrigger value="table">{language === 'ar' ? 'جدول البيانات' : 'Data Table'}</TabsTrigger>
               <TabsTrigger value="summary">{language === 'ar' ? 'ملخص' : 'Summary'}</TabsTrigger>
+              <TabsTrigger value="analytics">{language === 'ar' ? 'التحليلات' : 'Analytics'}</TabsTrigger>
             </TabsList>
             
             <TabsContent value="table">
@@ -178,14 +282,24 @@ const Reports: React.FC = () => {
                         <TableCell>{item.overall}</TableCell>
                       </TableRow>
                     ))}
+                    
+                    {filteredData.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
+                          {language === 'ar' ? 'لا توجد بيانات متاحة' : 'No data available'}
+                        </TableCell>
+                      </TableRow>
+                    )}
                   </TableBody>
                 </Table>
               </div>
-              <div className="text-center text-sm text-muted-foreground mt-2">
-                {language === 'ar' 
-                  ? `عرض 10 من ${filteredData.length} سجل`
-                  : `Showing 10 of ${filteredData.length} records`}
-              </div>
+              {filteredData.length > 0 && (
+                <div className="text-center text-sm text-muted-foreground mt-2">
+                  {language === 'ar' 
+                    ? `عرض ${Math.min(10, filteredData.length)} من ${filteredData.length} سجل`
+                    : `Showing ${Math.min(10, filteredData.length)} of ${filteredData.length} records`}
+                </div>
+              )}
             </TabsContent>
             
             <TabsContent value="summary">
@@ -204,33 +318,23 @@ const Reports: React.FC = () => {
                       </div>
                       <div className="flex justify-between">
                         <dt className="font-medium">{language === 'ar' ? 'متوسط الرضا العام:' : 'Average Overall Satisfaction:'}</dt>
-                        <dd>
-                          {(filteredData.reduce((sum, item) => sum + (item.overall || 0), 0) / filteredData.length).toFixed(2)}
-                        </dd>
+                        <dd>{averageOverall}</dd>
                       </div>
                       <div className="flex justify-between">
                         <dt className="font-medium">{t('serviceQuality')}:</dt>
-                        <dd>
-                          {(filteredData.reduce((sum, item) => sum + item.serviceQuality, 0) / filteredData.length).toFixed(2)}
-                        </dd>
+                        <dd>{averageServiceQuality}</dd>
                       </div>
                       <div className="flex justify-between">
                         <dt className="font-medium">{t('staffBehavior')}:</dt>
-                        <dd>
-                          {(filteredData.reduce((sum, item) => sum + item.staffBehavior, 0) / filteredData.length).toFixed(2)}
-                        </dd>
+                        <dd>{averageStaffBehavior}</dd>
                       </div>
                       <div className="flex justify-between">
                         <dt className="font-medium">{t('waitingTime')}:</dt>
-                        <dd>
-                          {(filteredData.reduce((sum, item) => sum + item.waitingTime, 0) / filteredData.length).toFixed(2)}
-                        </dd>
+                        <dd>{averageWaitingTime}</dd>
                       </div>
                       <div className="flex justify-between">
                         <dt className="font-medium">{t('facilities')}:</dt>
-                        <dd>
-                          {(filteredData.reduce((sum, item) => sum + item.facilities, 0) / filteredData.length).toFixed(2)}
-                        </dd>
+                        <dd>{averageFacilities}</dd>
                       </div>
                     </dl>
                   </CardContent>
@@ -244,26 +348,107 @@ const Reports: React.FC = () => {
                   </CardHeader>
                   <CardContent>
                     <dl className="space-y-4">
-                      {locations.map(location => {
-                        const count = filteredData.filter(item => {
-                          if (location.type === 'headquarters') {
-                            return item.location === 'headquarters';
-                          } else {
-                            return item.location === 'hospital' && 
-                                  (language === 'en' ? item.hospitalName === location.nameEn : item.hospitalName === location.nameAr);
-                          }
-                        }).length;
-                        
-                        return (
-                          <div key={location.id} className="flex justify-between">
-                            <dt className="font-medium">
-                              {language === 'ar' ? location.nameAr : location.nameEn}:
-                            </dt>
-                            <dd>{count} ({((count / filteredData.length) * 100).toFixed(1)}%)</dd>
-                          </div>
-                        );
-                      })}
+                      {locationStats.map(location => (
+                        <div key={location.id} className="flex justify-between">
+                          <dt className="font-medium">
+                            {location.name}:
+                          </dt>
+                          <dd>{location.count} ({location.percentage}%)</dd>
+                        </div>
+                      ))}
                     </dl>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="analytics">
+              <div className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm font-medium">
+                      {language === 'ar' ? 'تحليل التقييمات حسب المعيار' : 'Rating Analysis By Category'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">{t('serviceQuality')}</span>
+                        <div className="w-2/3 bg-gray-200 rounded-full h-4">
+                          <div 
+                            className="bg-blue-500 h-4 rounded-full" 
+                            style={{ width: `${(parseFloat(averageServiceQuality) / 5) * 100}%` }}
+                          />
+                        </div>
+                        <span>{averageServiceQuality}/5</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">{t('staffBehavior')}</span>
+                        <div className="w-2/3 bg-gray-200 rounded-full h-4">
+                          <div 
+                            className="bg-green-500 h-4 rounded-full" 
+                            style={{ width: `${(parseFloat(averageStaffBehavior) / 5) * 100}%` }}
+                          />
+                        </div>
+                        <span>{averageStaffBehavior}/5</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">{t('waitingTime')}</span>
+                        <div className="w-2/3 bg-gray-200 rounded-full h-4">
+                          <div 
+                            className="bg-amber-500 h-4 rounded-full" 
+                            style={{ width: `${(parseFloat(averageWaitingTime) / 5) * 100}%` }}
+                          />
+                        </div>
+                        <span>{averageWaitingTime}/5</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">{t('facilities')}</span>
+                        <div className="w-2/3 bg-gray-200 rounded-full h-4">
+                          <div 
+                            className="bg-purple-500 h-4 rounded-full" 
+                            style={{ width: `${(parseFloat(averageFacilities) / 5) * 100}%` }}
+                          />
+                        </div>
+                        <span>{averageFacilities}/5</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm font-medium">
+                      {language === 'ar' ? 'نسبة الرضا العام' : 'Overall Satisfaction Rate'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex justify-center items-center">
+                      <div className="relative h-40 w-40">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="text-4xl font-bold">{averageOverall}</span>
+                        </div>
+                        <svg viewBox="0 0 100 100" className="transform -rotate-90">
+                          <circle
+                            cx="50"
+                            cy="50"
+                            r="45"
+                            fill="transparent"
+                            stroke="currentColor"
+                            strokeWidth="10"
+                            strokeDasharray="282.7"
+                            strokeDashoffset={282.7 * (1 - parseFloat(averageOverall) / 5)}
+                            className="text-primary"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <p className="text-center mt-4">
+                      {language === 'ar' 
+                        ? `متوسط الرضا العام هو ${averageOverall} من 5`
+                        : `Average overall satisfaction is ${averageOverall} out of 5`
+                      }
+                    </p>
                   </CardContent>
                 </Card>
               </div>
@@ -284,6 +469,10 @@ const Reports: React.FC = () => {
             <Button variant="outline" onClick={() => handleExport('pdf')}>
               <FileText className="mr-2 h-4 w-4" />
               {t('exportPDF')}
+            </Button>
+            <Button variant="outline" onClick={() => handleExport('csv')}>
+              <Download className="mr-2 h-4 w-4" />
+              {language === 'ar' ? 'تصدير CSV' : 'Export CSV'}
             </Button>
           </div>
         </CardFooter>
