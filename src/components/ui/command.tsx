@@ -46,10 +46,15 @@ const CommandInput = React.forwardRef<
   // Ensure value is always a string
   const safeValue = value === undefined || value === null ? "" : value;
   
-  // Handle onValueChange if provided
-  const handleValueChange = onValueChange 
-    ? (newValue: string) => onValueChange(newValue)
-    : undefined;
+  // Create a safe onValueChange handler
+  const handleValueChange = React.useCallback(
+    (newValue: string) => {
+      if (onValueChange) {
+        onValueChange(newValue || "");
+      }
+    },
+    [onValueChange]
+  );
 
   return (
     <div className="flex items-center border-b px-3" cmdk-input-wrapper="">
@@ -66,7 +71,7 @@ const CommandInput = React.forwardRef<
       />
     </div>
   );
-})
+});
 
 CommandInput.displayName = CommandPrimitive.Input.displayName
 

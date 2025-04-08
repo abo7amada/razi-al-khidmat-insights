@@ -65,7 +65,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ onSelectLocation, s
       })
     : locations;
 
-  // Handle search query change
+  // Handle search query change with proper type safety
   const handleSearchChange = (value: string) => {
     setSearchQuery(value || "");
   };
