@@ -42,7 +42,7 @@ export const useHasPermission = () => {
         
       case 'branchManager':
         // Branch managers can do everything but only for their branch
-        if (branchId && currentUser?.managedBranchIds?.includes(branchId)) {
+        if (branchId && currentUser?.branches?.includes(branchId)) {
           return true;
         } else if (!branchId && permission === 'view_insights') {
           // Branch managers can view insights generally

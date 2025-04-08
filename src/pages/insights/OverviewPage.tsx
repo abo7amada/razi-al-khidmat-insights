@@ -15,11 +15,26 @@ import {
   Users,
   Construction
 } from 'lucide-react';
-import { TrendChart } from '@/components/insights/TrendChart';
-import { BranchPerformanceCard } from '@/components/insights/BranchPerformanceCard';
+import TrendChart from '@/components/insights/TrendChart';
+import BranchPerformanceCard from '@/components/insights/BranchPerformanceCard';
+
+// Define types for our data
+interface OverviewData {
+  kpis: {
+    avgSatisfaction: number;
+    nps: number;
+    responsesToday: number;
+    complaintsOpen: number;
+  };
+  satisfactionTrend: Array<{ date: string; score: number }>;
+  branches: {
+    best: { name: string; score: number };
+    worst: { name: string; score: number };
+  };
+}
 
 // Mock data for overview
-const mockOverviewData = {
+const mockOverviewData: OverviewData = {
   kpis: {
     avgSatisfaction: 85,
     nps: 42,
@@ -27,40 +42,40 @@ const mockOverviewData = {
     complaintsOpen: 7
   },
   satisfactionTrend: [
-    { date: '2025-03-10', value: 84 },
-    { date: '2025-03-11', value: 82 },
-    { date: '2025-03-12', value: 86 },
-    { date: '2025-03-13', value: 83 },
-    { date: '2025-03-14', value: 85 },
-    { date: '2025-03-15', value: 88 },
-    { date: '2025-03-16', value: 87 },
-    { date: '2025-03-17', value: 85 },
-    { date: '2025-03-18', value: 89 },
-    { date: '2025-03-19', value: 84 },
-    { date: '2025-03-20', value: 82 },
-    { date: '2025-03-21', value: 86 },
-    { date: '2025-03-22', value: 88 },
-    { date: '2025-03-23', value: 89 },
-    { date: '2025-03-24', value: 87 },
-    { date: '2025-03-25', value: 90 },
-    { date: '2025-03-26', value: 91 },
-    { date: '2025-03-27', value: 89 },
-    { date: '2025-03-28', value: 88 },
-    { date: '2025-03-29', value: 87 },
-    { date: '2025-03-30', value: 85 },
-    { date: '2025-03-31', value: 84 },
-    { date: '2025-04-01', value: 85 },
-    { date: '2025-04-02', value: 86 },
-    { date: '2025-04-03', value: 87 },
-    { date: '2025-04-04', value: 85 },
-    { date: '2025-04-05', value: 83 },
-    { date: '2025-04-06', value: 84 },
-    { date: '2025-04-07', value: 86 },
-    { date: '2025-04-08', value: 85 }
+    { date: '2025-03-10', score: 84 },
+    { date: '2025-03-11', score: 82 },
+    { date: '2025-03-12', score: 86 },
+    { date: '2025-03-13', score: 83 },
+    { date: '2025-03-14', score: 85 },
+    { date: '2025-03-15', score: 88 },
+    { date: '2025-03-16', score: 87 },
+    { date: '2025-03-17', score: 85 },
+    { date: '2025-03-18', score: 89 },
+    { date: '2025-03-19', score: 84 },
+    { date: '2025-03-20', score: 82 },
+    { date: '2025-03-21', score: 86 },
+    { date: '2025-03-22', score: 88 },
+    { date: '2025-03-23', score: 89 },
+    { date: '2025-03-24', score: 87 },
+    { date: '2025-03-25', score: 90 },
+    { date: '2025-03-26', score: 91 },
+    { date: '2025-03-27', score: 89 },
+    { date: '2025-03-28', score: 88 },
+    { date: '2025-03-29', score: 87 },
+    { date: '2025-03-30', score: 85 },
+    { date: '2025-03-31', score: 84 },
+    { date: '2025-04-01', score: 85 },
+    { date: '2025-04-02', score: 86 },
+    { date: '2025-04-03', score: 87 },
+    { date: '2025-04-04', score: 85 },
+    { date: '2025-04-05', score: 83 },
+    { date: '2025-04-06', score: 84 },
+    { date: '2025-04-07', score: 86 },
+    { date: '2025-04-08', score: 85 }
   ],
   branches: {
-    best: { name: "فرع الرياض", satisfaction: 92, responsesCount: 342 },
-    worst: { name: "فرع الدمام", satisfaction: 76, responsesCount: 215 }
+    best: { name: "فرع الرياض", score: 92 },
+    worst: { name: "فرع الدمام", score: 76 }
   }
 };
 
@@ -76,7 +91,7 @@ const OverviewPage: React.FC = () => {
       // return await fetch(`/api/insights/${id}/overview`).then(res => res.json());
       
       // Mock data for now
-      return new Promise(resolve => {
+      return new Promise<OverviewData>(resolve => {
         setTimeout(() => resolve(mockOverviewData), 500);
       });
     }
@@ -159,7 +174,10 @@ const OverviewPage: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="h-80">
-            <TrendChart data={overviewData.satisfactionTrend} />
+            <TrendChart 
+              title={t('satisfactionTrend')}
+              data={overviewData.satisfactionTrend} 
+            />
           </div>
         </CardContent>
       </Card>
@@ -167,19 +185,19 @@ const OverviewPage: React.FC = () => {
       {/* Branch Performance */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <BranchPerformanceCard 
-          title={t('bestPerformingBranch')}
-          branchName={overviewData.branches.best.name}
-          satisfaction={overviewData.branches.best.satisfaction}
-          responsesCount={overviewData.branches.best.responsesCount}
           type="best"
+          branch={{
+            name: overviewData.branches.best.name,
+            score: overviewData.branches.best.score
+          }}
         />
         
         <BranchPerformanceCard 
-          title={t('worstPerformingBranch')}
-          branchName={overviewData.branches.worst.name}
-          satisfaction={overviewData.branches.worst.satisfaction}
-          responsesCount={overviewData.branches.worst.responsesCount}
           type="worst"
+          branch={{
+            name: overviewData.branches.worst.name,
+            score: overviewData.branches.worst.score
+          }}
         />
       </div>
       
