@@ -62,6 +62,13 @@ const AppRoutes = () => {
         </ProtectedRoute>
       } />
       
+      {/* رابط خاص بإدارة الشركات */}
+      <Route path="/companies" element={
+        <ProtectedRoute allowedRoles={['super_admin', 'system_admin']}>
+          <SuperAdminPage />
+        </ProtectedRoute>
+      } />
+      
       {/* المسارات المحمية التي تتطلب تسجيل الدخول واشتراكًا نشطًا */}
       <Route path="/" element={
         <ProtectedRoute>

@@ -3,16 +3,23 @@ import React from 'react';
 import Layout from '../components/Layout';
 import SiteManagement from '../components/SiteManagement';
 import { useLanguage } from '../context/LanguageContext';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAuth } from '../context/AuthContext';
 
 const SitesPage = () => {
   const { t } = useLanguage();
+  const { currentCompany } = useAuth();
   
   return (
     <Layout currentPage="sites">
-      <div className="container mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-6">{t('sitesManagement')}</h1>
-        <SiteManagement />
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('sitesManagement')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <SiteManagement companyId={currentCompany?.id} />
+        </CardContent>
+      </Card>
     </Layout>
   );
 };

@@ -5,20 +5,23 @@ import CompanyManagement from '../components/super-admin/CompanyManagement';
 import BillingManagement from '../components/super-admin/BillingManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '../context/AuthContext';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { mockCompanies } from '../types/company';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Building } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const SuperAdminPage = () => {
   const { isSuperAdmin } = useAuth();
   const [activeTab, setActiveTab] = useState<string>('companies');
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [companies, setCompanies] = useState(mockCompanies);
   
   useEffect(() => {
     // محاكاة تحميل البيانات
     const timer = setTimeout(() => {
+      setCompanies(mockCompanies);
       setIsLoading(false);
     }, 500);
     
@@ -33,9 +36,17 @@ const SuperAdminPage = () => {
     <ProtectedRoute allowedRoles={['super_admin']}>
       <Layout currentPage="dashboard">
         <div className="space-y-6">
-          <h1 className="text-3xl font-bold">لوحة تحكم المدير الرئيسي</h1>
+          <div className="flex justify-between items-center">
+            <h1 className="text-3xl font-bold">لوحة تحكم المدير الرئيسي</h1>
+            <Button asChild variant="outline">
+              <Link to="/admin">
+                <Building className="w-4 h-4 ml-2" />
+                إدارة الشركات
+              </Link>
+            </Button>
+          </div>
           
-          {mockCompanies.length === 0 && !isLoading && (
+          {companies.length === 0 && !isLoading && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>تنبيه</AlertTitle>

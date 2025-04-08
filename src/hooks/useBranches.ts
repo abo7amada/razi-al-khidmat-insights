@@ -8,7 +8,10 @@ export const useBranches = (companyId: string) => {
     queryFn: async () => {
       // In a real application, this would be an API call
       // For now, we'll use the mock data
-      return mockSites.filter(site => site.companyId === companyId);
+      const filteredSites = mockSites.filter(site => site.companyId === companyId);
+      
+      // Return the filtered sites or an empty array if none are found
+      return filteredSites;
     },
     enabled: !!companyId,
   });
