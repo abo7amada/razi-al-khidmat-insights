@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
@@ -23,9 +22,10 @@ import { v4 as uuid } from '@/lib/utils';
 interface SurveyEditorProps {
   surveyId?: string;
   onCancel: () => void;
+  onSave: () => void; // Added this prop to match what's being passed from SurveyCreator
 }
 
-const SurveyEditor: React.FC<SurveyEditorProps> = ({ surveyId, onCancel }) => {
+const SurveyEditor: React.FC<SurveyEditorProps> = ({ surveyId, onCancel, onSave }) => {
   const { t, language } = useLanguage();
   
   const existingSurvey = surveyId 
@@ -170,7 +170,7 @@ const SurveyEditor: React.FC<SurveyEditorProps> = ({ surveyId, onCancel }) => {
         : 'Your survey has been saved successfully',
     });
     
-    onCancel(); // Return to the survey list
+    onSave(); // Call the onSave prop that was passed from SurveyCreator
   };
   
   const renderPreview = () => {
