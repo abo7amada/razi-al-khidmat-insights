@@ -2,518 +2,530 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
+import { Site, mockSites } from '../types/company';
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader, 
+  DialogTitle 
 } from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { toast } from '@/components/ui/use-toast';
-import { Building, Phone, MapPin, Plus, Trash, PencilIcon } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { mockSites, Site } from '../types/company';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import { toast } from '@/hooks/use-toast';
+import { 
+  PlusCircle, 
+  Edit, 
+  Trash2, 
+  MoreVertical,
+  CheckCircle, 
+  XCircle,
+  Search
+} from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
-const siteFormSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  nameAr: z.string().min(2, {
-    message: "Name (Arabic) must be at least 2 characters.",
-  }),
-  nameEn: z.string().min(2, {
-    message: "Name (English) must be at least 2 characters.",
-  }),
-  address: z.string().optional(),
-  city: z.string().optional(),
-  phone: z.string().optional(),
-});
-
-const SiteManagement: React.FC = () => {
+const SiteManagement = () => {
   const { t, language } = useLanguage();
   const { currentUser, userOrganization } = useAuth();
-  const [sites, setSites] = useState<Site[]>(() => {
-    const companyId = currentUser?.organizationId;
-    return companyId ? mockSites.filter(site => site.companyId === companyId) : [];
-  });
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
+  const { toast } = useToast();
+  
+  const [sites, setSites] = useState<Site[]>(mockSites.filter(site => site.companyId === userOrganization?.id));
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedSite, setSelectedSite] = useState<Site | null>(null);
-
-  const createForm = useForm<z.infer<typeof siteFormSchema>>({
-    resolver: zodResolver(siteFormSchema),
-    defaultValues: {
-      name: "",
-      nameAr: "",
-      nameEn: "",
-      address: "",
-      city: "",
-      phone: "",
-    },
+  const [currentSite, setCurrentSite] = useState<Site | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [newSite, setNewSite] = useState<Partial<Site>>({
+    name: '',
+    nameAr: '',
+    nameEn: '',
+    address: '',
+    city: '',
+    phone: '',
+    isActive: true
   });
 
-  const editForm = useForm<z.infer<typeof siteFormSchema>>({
-    resolver: zodResolver(siteFormSchema),
-    defaultValues: {
-      name: "",
-      nameAr: "",
-      nameEn: "",
-      address: "",
-      city: "",
-      phone: "",
-    },
-  });
+  // Filter sites based on search term
+  const filteredSites = sites.filter(site => 
+    site.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    site.address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    site.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    site.phone?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const handleCreate = (values: z.infer<typeof siteFormSchema>) => {
-    if (!currentUser?.organizationId) {
+  const handleAddSite = () => {
+    if (!userOrganization) {
       toast({
-        title: t('error'),
-        description: t('noCompanyAssigned'),
-        variant: "destructive",
+        title: language === 'ar' ? 'خطأ' : 'Error',
+        description: language === 'ar' ? 'لا يمكن إضافة فرع. المؤسسة غير محددة.' : 'Cannot add site. Organization not specified.',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    // Validate required fields
+    if (!newSite.name) {
+      toast({
+        title: language === 'ar' ? 'خطأ' : 'Error',
+        description: language === 'ar' ? 'اسم الفرع مطلوب.' : 'Site name is required.',
+        variant: 'destructive'
       });
       return;
     }
     
-    const newSite: Site = {
-      id: `site${Date.now()}`,
-      companyId: currentUser.organizationId,
-      name: values.name,
-      nameAr: values.nameAr,
-      nameEn: values.nameEn,
-      address: values.address,
-      city: values.city,
-      phone: values.phone,
-      isActive: true,
-      createdAt: new Date().toISOString(),
+    // Create new site
+    const createdSite: Site = {
+      id: `site${sites.length + 1}`,
+      companyId: userOrganization.id,
+      name: newSite.name,
+      nameAr: newSite.nameAr,
+      nameEn: newSite.nameEn,
+      address: newSite.address,
+      city: newSite.city,
+      phone: newSite.phone,
+      isActive: newSite.isActive || true,
+      createdAt: new Date().toISOString()
     };
     
-    setSites([...sites, newSite]);
-    setIsCreateOpen(false);
-    createForm.reset();
+    // Add to sites list
+    setSites([...sites, createdSite]);
     
+    // Reset form and close dialog
+    setNewSite({
+      name: '',
+      nameAr: '',
+      nameEn: '',
+      address: '',
+      city: '',
+      phone: '',
+      isActive: true
+    });
+    setIsAddDialogOpen(false);
+    
+    // Show success message
     toast({
-      title: t('siteCreated'),
-      description: language === 'ar' ? values.nameAr : values.nameEn,
+      title: language === 'ar' ? 'تمت الإضافة' : 'Site Added',
+      description: language === 'ar' ? 'تم إضافة الفرع بنجاح.' : 'Site has been added successfully.',
     });
   };
 
-  const handleEdit = (site: Site) => {
-    setSelectedSite(site);
-    editForm.reset({
-      name: site.name,
-      nameAr: site.nameAr || "",
-      nameEn: site.nameEn || "",
-      address: site.address || "",
-      city: site.city || "",
-      phone: site.phone || "",
-    });
-    setIsEditOpen(true);
-  };
-
-  const handleUpdate = (values: z.infer<typeof siteFormSchema>) => {
-    if (!selectedSite) return;
+  const handleEditSite = () => {
+    if (!currentSite) return;
     
-    const updatedSites = sites.map(site => {
-      if (site.id === selectedSite.id) {
-        return {
-          ...site,
-          name: values.name,
-          nameAr: values.nameAr,
-          nameEn: values.nameEn,
-          address: values.address,
-          city: values.city,
-          phone: values.phone,
-        };
-      }
-      return site;
-    });
+    // Update the site in the list
+    const updatedSites = sites.map(site => 
+      site.id === currentSite.id ? currentSite : site
+    );
     
     setSites(updatedSites);
-    setIsEditOpen(false);
-    setSelectedSite(null);
+    setIsEditDialogOpen(false);
     
+    // Show success message
     toast({
-      title: t('siteUpdated'),
-      description: language === 'ar' ? values.nameAr : values.nameEn,
+      title: language === 'ar' ? 'تم التعديل' : 'Site Updated',
+      description: language === 'ar' ? 'تم تعديل الفرع بنجاح.' : 'Site has been updated successfully.',
     });
   };
 
-  const handleDelete = (site: Site) => {
-    setSelectedSite(site);
+  const handleDeleteSite = () => {
+    if (!currentSite) return;
+    
+    // Remove the site from the list
+    const updatedSites = sites.filter(site => site.id !== currentSite.id);
+    
+    setSites(updatedSites);
+    setIsDeleteDialogOpen(false);
+    
+    // Show success message
+    toast({
+      title: language === 'ar' ? 'تم الحذف' : 'Site Deleted',
+      description: language === 'ar' ? 'تم حذف الفرع بنجاح.' : 'Site has been deleted successfully.',
+      variant: 'destructive'
+    });
+  };
+
+  const handleToggleSiteStatus = (site: Site) => {
+    // Update the site status in the list
+    const updatedSites = sites.map(s => 
+      s.id === site.id ? { ...s, isActive: !s.isActive } : s
+    );
+    
+    setSites(updatedSites);
+    
+    // Show success message
+    toast({
+      title: site.isActive 
+        ? (language === 'ar' ? 'تم تعطيل الفرع' : 'Site Disabled')
+        : (language === 'ar' ? 'تم تفعيل الفرع' : 'Site Enabled'),
+      description: site.isActive 
+        ? (language === 'ar' ? 'تم تعطيل الفرع بنجاح.' : 'Site has been disabled successfully.')
+        : (language === 'ar' ? 'تم تفعيل الفرع بنجاح.' : 'Site has been enabled successfully.'),
+    });
+  };
+
+  const openEditDialog = (site: Site) => {
+    setCurrentSite({ ...site });
+    setIsEditDialogOpen(true);
+  };
+
+  const openDeleteDialog = (site: Site) => {
+    setCurrentSite(site);
     setIsDeleteDialogOpen(true);
   };
 
-  const confirmDelete = () => {
-    if (!selectedSite) return;
-    
-    const newSites = sites.filter(site => site.id !== selectedSite.id);
-    setSites(newSites);
-    setIsDeleteDialogOpen(false);
-    
-    toast({
-      title: t('siteDeleted'),
-      description: language === 'ar' ? selectedSite.nameAr : selectedSite.nameEn,
-      variant: "destructive",
-    });
-    
-    setSelectedSite(null);
-  };
-
-  const isSubscriptionActive = userOrganization?.active ?? false;
+  // Check if subscription is active to allow adding sites
+  const canAddSites = userOrganization?.active ?? false;
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">{t('siteManagement')}</h2>
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger asChild>
-            <Button disabled={!isSubscriptionActive}>
-              <Plus className="mr-2 h-4 w-4" /> {t('addSite')}
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[550px]">
-            <DialogHeader>
-              <DialogTitle>{t('createNewSite')}</DialogTitle>
-              <DialogDescription>{t('enterSiteDetails')}</DialogDescription>
-            </DialogHeader>
-            <Form {...createForm}>
-              <form onSubmit={createForm.handleSubmit(handleCreate)} className="space-y-4 py-4">
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <FormField
-                    control={createForm.control}
-                    name="nameAr"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('nameAr')}</FormLabel>
-                        <FormControl>
-                          <Input {...field} dir="rtl" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={createForm.control}
-                    name="nameEn"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('nameEn')}</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                
-                <FormField
-                  control={createForm.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('displayName')}</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        {t('displayNameDescription')}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={createForm.control}
-                  name="address"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('address')}</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <FormField
-                    control={createForm.control}
-                    name="city"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('city')}</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={createForm.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('phone')}</FormLabel>
-                        <FormControl>
-                          <Input {...field} type="tel" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                
-                <DialogFooter>
-                  <Button type="submit">{t('create')}</Button>
-                </DialogFooter>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
+      <div className="flex flex-col md:flex-row justify-between gap-4">
+        {/* Search */}
+        <div className="relative w-full md:w-64">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder={language === 'ar' ? 'بحث...' : 'Search...'}
+            className="pl-8"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        
+        {/* Add Site Button */}
+        <Button
+          onClick={() => setIsAddDialogOpen(true)}
+          disabled={!canAddSites}
+          className="flex items-center gap-1"
+        >
+          <PlusCircle className="h-4 w-4 mr-1" />
+          {language === 'ar' ? 'إضافة فرع جديد' : 'Add New Site'}
+        </Button>
       </div>
 
-      {!isSubscriptionActive && (
-        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="mr-3">
-              <p className="text-sm text-yellow-700">
-                {t('subscriptionRequiredForSites')}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Sites Table */}
+      <div className="border rounded-lg overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{language === 'ar' ? 'اسم الفرع' : 'Site Name'}</TableHead>
+              <TableHead>{language === 'ar' ? 'المدينة' : 'City'}</TableHead>
+              <TableHead>{language === 'ar' ? 'العنوان' : 'Address'}</TableHead>
+              <TableHead>{language === 'ar' ? 'رقم الهاتف' : 'Phone'}</TableHead>
+              <TableHead>{language === 'ar' ? 'الحالة' : 'Status'}</TableHead>
+              <TableHead className="text-right">{language === 'ar' ? 'الإجراءات' : 'Actions'}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredSites.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  {searchTerm
+                    ? (language === 'ar' ? 'لا توجد فروع مطابقة لبحثك' : 'No sites match your search')
+                    : (language === 'ar' ? 'لا توجد فروع حالياً' : 'No sites available')
+                  }
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredSites.map((site) => (
+                <TableRow key={site.id}>
+                  <TableCell>{site.name}</TableCell>
+                  <TableCell>{site.city || '-'}</TableCell>
+                  <TableCell>{site.address || '-'}</TableCell>
+                  <TableCell>{site.phone || '-'}</TableCell>
+                  <TableCell>
+                    <Badge variant={site.isActive ? 'outline' : 'secondary'}>
+                      {site.isActive 
+                        ? (language === 'ar' ? 'مفعل' : 'Active') 
+                        : (language === 'ar' ? 'معطل' : 'Inactive')
+                      }
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <MoreVertical className="h-4 w-4" />
+                          <span className="sr-only">Open menu</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => openEditDialog(site)}>
+                          <Edit className="h-4 w-4 mr-2" />
+                          {language === 'ar' ? 'تعديل' : 'Edit'}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleToggleSiteStatus(site)}>
+                          {site.isActive ? (
+                            <>
+                              <XCircle className="h-4 w-4 mr-2" />
+                              {language === 'ar' ? 'تعطيل' : 'Disable'}
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle className="h-4 w-4 mr-2" />
+                              {language === 'ar' ? 'تفعيل' : 'Enable'}
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => openDeleteDialog(site)}
+                          className="text-red-600 hover:text-red-600 focus:text-red-600"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          {language === 'ar' ? 'حذف' : 'Delete'}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
-      {sites.length === 0 ? (
-        <div className="text-center py-10 border border-dashed rounded-lg">
-          <Building className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-sm font-semibold text-gray-900">{t('noSites')}</h3>
-          <p className="mt-1 text-sm text-gray-500">{t('getStartedByCreating')}</p>
-          <div className="mt-6">
-            <Button 
-              onClick={() => setIsCreateOpen(true)}
-              disabled={!isSubscriptionActive}
-            >
-              <Plus className="mr-2 h-4 w-4" /> {t('addSite')}
-            </Button>
-          </div>
-        </div>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {sites.map((site) => (
-            <Card key={site.id} className="overflow-hidden">
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Building className="h-5 w-5 text-primary" />
-                  {language === 'ar' ? site.nameAr : site.nameEn}
-                </CardTitle>
-                {site.address && (
-                  <CardDescription className="flex items-center gap-1">
-                    <MapPin className="h-3 w-3" /> 
-                    {site.address}{site.city ? `, ${site.city}` : ''}
-                  </CardDescription>
-                )}
-              </CardHeader>
-              {site.phone && (
-                <CardContent className="pt-0 pb-2">
-                  <p className="text-sm flex items-center gap-1 text-muted-foreground">
-                    <Phone className="h-3 w-3" /> 
-                    {site.phone}
-                  </p>
-                </CardContent>
-              )}
-              <CardFooter className="flex justify-between">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleEdit(site)}
-                >
-                  <PencilIcon className="h-4 w-4 mr-1" />
-                  {t('edit')}
-                </Button>
-                <AlertDialog open={isDeleteDialogOpen && selectedSite?.id === site.id} onOpenChange={setIsDeleteDialogOpen}>
-                  <AlertDialogTrigger asChild>
-                    <Button 
-                      variant="destructive" 
-                      size="sm"
-                      onClick={() => handleDelete(site)}
-                    >
-                      <Trash className="h-4 w-4 mr-1" />
-                      {t('delete')}
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>{t('confirmDelete')}</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        {t('siteDeleteConfirmation', {
-                          name: language === 'ar' ? site.nameAr : site.nameEn 
-                        })}
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
-                      <AlertDialogAction onClick={confirmDelete}>
-                        {t('delete')}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {/* Edit Dialog */}
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-[550px]">
+      {/* Add Site Dialog */}
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>{t('editSite')}</DialogTitle>
+            <DialogTitle>{language === 'ar' ? 'إضافة فرع جديد' : 'Add New Site'}</DialogTitle>
             <DialogDescription>
-              {selectedSite && (language === 'ar' ? selectedSite.nameAr : selectedSite.nameEn)}
+              {language === 'ar' 
+                ? 'أدخل تفاصيل الفرع الجديد أدناه.'
+                : 'Enter the details for the new site below.'
+              }
             </DialogDescription>
           </DialogHeader>
-          <Form {...editForm}>
-            <form onSubmit={editForm.handleSubmit(handleUpdate)} className="space-y-4 py-4">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <FormField
-                  control={editForm.control}
-                  name="nameAr"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('nameAr')}</FormLabel>
-                      <FormControl>
-                        <Input {...field} dir="rtl" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={editForm.control}
-                  name="nameEn"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('nameEn')}</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label htmlFor="siteName" className="text-sm font-medium">
+                {language === 'ar' ? 'اسم الفرع *' : 'Site Name *'}
+              </label>
+              <Input
+                id="siteName"
+                value={newSite.name}
+                onChange={(e) => setNewSite({...newSite, name: e.target.value})}
+                placeholder={language === 'ar' ? 'أدخل اسم الفرع' : 'Enter site name'}
+                required
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="siteNameAr" className="text-sm font-medium">
+                  {language === 'ar' ? 'الاسم بالعربية' : 'Arabic Name'}
+                </label>
+                <Input
+                  id="siteNameAr"
+                  value={newSite.nameAr || ''}
+                  onChange={(e) => setNewSite({...newSite, nameAr: e.target.value})}
+                  placeholder={language === 'ar' ? 'أدخل الاسم بالعربية' : 'Enter Arabic name'}
                 />
               </div>
-              
-              <FormField
-                control={editForm.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('displayName')}</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      {t('displayNameDescription')}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={editForm.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('address')}</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <FormField
-                  control={editForm.control}
-                  name="city"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('city')}</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={editForm.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('phone')}</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="tel" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+              <div className="space-y-2">
+                <label htmlFor="siteNameEn" className="text-sm font-medium">
+                  {language === 'ar' ? 'الاسم بالإنجليزية' : 'English Name'}
+                </label>
+                <Input
+                  id="siteNameEn"
+                  value={newSite.nameEn || ''}
+                  onChange={(e) => setNewSite({...newSite, nameEn: e.target.value})}
+                  placeholder={language === 'ar' ? 'أدخل الاسم بالإنجليزية' : 'Enter English name'}
                 />
               </div>
-              
-              <DialogFooter>
-                <Button type="submit">{t('save')}</Button>
-              </DialogFooter>
-            </form>
-          </Form>
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="city" className="text-sm font-medium">
+                {language === 'ar' ? 'المدينة' : 'City'}
+              </label>
+              <Input
+                id="city"
+                value={newSite.city || ''}
+                onChange={(e) => setNewSite({...newSite, city: e.target.value})}
+                placeholder={language === 'ar' ? 'أدخل اسم المدينة' : 'Enter city name'}
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="address" className="text-sm font-medium">
+                {language === 'ar' ? 'العنوان' : 'Address'}
+              </label>
+              <Input
+                id="address"
+                value={newSite.address || ''}
+                onChange={(e) => setNewSite({...newSite, address: e.target.value})}
+                placeholder={language === 'ar' ? 'أدخل العنوان' : 'Enter address'}
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="phone" className="text-sm font-medium">
+                {language === 'ar' ? 'رقم الهاتف' : 'Phone Number'}
+              </label>
+              <Input
+                id="phone"
+                value={newSite.phone || ''}
+                onChange={(e) => setNewSite({...newSite, phone: e.target.value})}
+                placeholder={language === 'ar' ? 'أدخل رقم الهاتف' : 'Enter phone number'}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+              {language === 'ar' ? 'إلغاء' : 'Cancel'}
+            </Button>
+            <Button onClick={handleAddSite}>
+              {language === 'ar' ? 'إضافة' : 'Add'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Site Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{language === 'ar' ? 'تعديل الفرع' : 'Edit Site'}</DialogTitle>
+            <DialogDescription>
+              {language === 'ar' 
+                ? 'قم بتعديل تفاصيل الفرع أدناه.'
+                : 'Modify the site details below.'
+              }
+            </DialogDescription>
+          </DialogHeader>
+          {currentSite && (
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <label htmlFor="editSiteName" className="text-sm font-medium">
+                  {language === 'ar' ? 'اسم الفرع *' : 'Site Name *'}
+                </label>
+                <Input
+                  id="editSiteName"
+                  value={currentSite.name}
+                  onChange={(e) => setCurrentSite({...currentSite, name: e.target.value})}
+                  placeholder={language === 'ar' ? 'أدخل اسم الفرع' : 'Enter site name'}
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="editSiteNameAr" className="text-sm font-medium">
+                    {language === 'ar' ? 'الاسم بالعربية' : 'Arabic Name'}
+                  </label>
+                  <Input
+                    id="editSiteNameAr"
+                    value={currentSite.nameAr || ''}
+                    onChange={(e) => setCurrentSite({...currentSite, nameAr: e.target.value})}
+                    placeholder={language === 'ar' ? 'أدخل الاسم بالعربية' : 'Enter Arabic name'}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="editSiteNameEn" className="text-sm font-medium">
+                    {language === 'ar' ? 'الاسم بالإنجليزية' : 'English Name'}
+                  </label>
+                  <Input
+                    id="editSiteNameEn"
+                    value={currentSite.nameEn || ''}
+                    onChange={(e) => setCurrentSite({...currentSite, nameEn: e.target.value})}
+                    placeholder={language === 'ar' ? 'أدخل الاسم بالإنجليزية' : 'Enter English name'}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="editCity" className="text-sm font-medium">
+                  {language === 'ar' ? 'المدينة' : 'City'}
+                </label>
+                <Input
+                  id="editCity"
+                  value={currentSite.city || ''}
+                  onChange={(e) => setCurrentSite({...currentSite, city: e.target.value})}
+                  placeholder={language === 'ar' ? 'أدخل اسم المدينة' : 'Enter city name'}
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="editAddress" className="text-sm font-medium">
+                  {language === 'ar' ? 'العنوان' : 'Address'}
+                </label>
+                <Input
+                  id="editAddress"
+                  value={currentSite.address || ''}
+                  onChange={(e) => setCurrentSite({...currentSite, address: e.target.value})}
+                  placeholder={language === 'ar' ? 'أدخل العنوان' : 'Enter address'}
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="editPhone" className="text-sm font-medium">
+                  {language === 'ar' ? 'رقم الهاتف' : 'Phone Number'}
+                </label>
+                <Input
+                  id="editPhone"
+                  value={currentSite.phone || ''}
+                  onChange={(e) => setCurrentSite({...currentSite, phone: e.target.value})}
+                  placeholder={language === 'ar' ? 'أدخل رقم الهاتف' : 'Enter phone number'}
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+              {language === 'ar' ? 'إلغاء' : 'Cancel'}
+            </Button>
+            <Button onClick={handleEditSite}>
+              {language === 'ar' ? 'حفظ التغييرات' : 'Save Changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Site Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-red-600">
+              {language === 'ar' ? 'تأكيد حذف الفرع' : 'Confirm Site Deletion'}
+            </DialogTitle>
+            <DialogDescription>
+              {language === 'ar' 
+                ? 'هل أنت متأكد من أنك تريد حذف هذا الفرع؟ هذا الإجراء لا يمكن التراجع عنه.'
+                : 'Are you sure you want to delete this site? This action cannot be undone.'
+              }
+            </DialogDescription>
+          </DialogHeader>
+          {currentSite && (
+            <div className="py-4 border-t border-b">
+              <h4 className="font-medium mb-2">
+                {language === 'ar' ? 'معلومات الفرع:' : 'Site Information:'}
+              </h4>
+              <p><strong>{language === 'ar' ? 'الاسم:' : 'Name:'}</strong> {currentSite.name}</p>
+              {currentSite.city && (
+                <p><strong>{language === 'ar' ? 'المدينة:' : 'City:'}</strong> {currentSite.city}</p>
+              )}
+              {currentSite.address && (
+                <p><strong>{language === 'ar' ? 'العنوان:' : 'Address:'}</strong> {currentSite.address}</p>
+              )}
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+              {language === 'ar' ? 'إلغاء' : 'Cancel'}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteSite}
+            >
+              {language === 'ar' ? 'حذف' : 'Delete'}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

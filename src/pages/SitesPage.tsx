@@ -8,7 +8,7 @@ const SitesPage = () => {
   const { t } = useLanguage();
   
   return (
-    <Layout currentPage="sites">
+    <Layout currentPage="locations">
       <div className="container mx-auto p-6">
         <h1 className="text-3xl font-bold mb-6">{t('sitesManagement')}</h1>
         <SiteManagement />
