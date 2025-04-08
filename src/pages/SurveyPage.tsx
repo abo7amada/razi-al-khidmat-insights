@@ -25,6 +25,7 @@ const SurveyPage = () => {
       <SurveyList 
         onCreateNew={handleCreateNew} 
         onEdit={handleEdit} 
+        onViewResponses={handleViewResponses}
       />
     </Layout>
   );

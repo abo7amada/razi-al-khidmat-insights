@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { locations } from '../data/mockData';
 import { Check, ChevronDown } from 'lucide-react';
@@ -40,7 +40,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ onSelectLocation, s
     ? (language === 'ar' ? selectedLocation.nameAr : selectedLocation.nameEn)
     : t('selectLocation');
 
-  const handleSelect = (locationId: string) => {
+  const handleSelect = useCallback((locationId: string) => {
     if (!locationId) return;
     
     setSelected(locationId);
@@ -55,7 +55,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ onSelectLocation, s
         duration: 3000,
       });
     }
-  };
+  }, [language, onSelectLocation, t]);
 
   // Filter locations based on search query
   const filteredLocations = locations.filter(location => {
@@ -67,9 +67,9 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ onSelectLocation, s
   });
 
   // Handle search query change with proper type safety
-  const handleSearchChange = (value: string) => {
+  const handleSearchChange = useCallback((value: string) => {
     setSearchQuery(value || "");
-  };
+  }, []);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
