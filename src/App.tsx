@@ -13,6 +13,7 @@ import AnalyticsPage from "./pages/AnalyticsPage";
 import UsersPage from "./pages/UsersPage";
 import LocationsPage from "./pages/LocationsPage";
 import SitesPage from "./pages/SitesPage";
+import InsightsPage from "./pages/InsightsPage";
 import VendorSettingsPage from "./pages/VendorSettingsPage";
 import LoginPage from "./pages/LoginPage";
 import SuperAdminPage from "./pages/SuperAdminPage";
@@ -63,6 +64,11 @@ const AppRoutes = () => {
       <Route path="/analytics" element={
         <ProtectedRoute requireActiveSubscription>
           <AnalyticsPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/insights" element={
+        <ProtectedRoute requireActiveSubscription allowedRoles={['super_admin', 'system_admin', 'company_admin', 'company_owner', 'branchManager']}>
+          <InsightsPage />
         </ProtectedRoute>
       } />
       <Route path="/users" element={
