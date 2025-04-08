@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { User, mockUsers, Organization, mockOrganizations } from '../components/vendor-settings/types';
 
 interface AuthContextType {
@@ -21,29 +21,10 @@ const AuthContext = createContext<AuthContextType>({
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  // تم تعطيل التحقق من وجود مستخدم محفوظ مؤقتًا
+  const [currentUser, setCurrentUser] = useState<User | null>(mockUsers[0]); // تعيين المستخدم الأول افتراضيا
+  const [isAdmin, setIsAdmin] = useState(true); // افتراض أن المستخدم هو مسؤول
   const [userOrganization, setUserOrganization] = useState<Organization | null>(null);
-
-  useEffect(() => {
-    // التحقق من وجود مستخدم محفوظ في localStorage
-    const savedUser = localStorage.getItem('currentUser');
-    if (savedUser) {
-      try {
-        const parsedUser = JSON.parse(savedUser) as User;
-        setCurrentUser(parsedUser);
-        setIsAdmin(parsedUser.role === 'admin');
-        
-        if (parsedUser.organizationId) {
-          const org = mockOrganizations.find(o => o.id === parsedUser.organizationId);
-          setUserOrganization(org || null);
-        }
-      } catch (error) {
-        console.error('Error parsing saved user:', error);
-        localStorage.removeItem('currentUser');
-      }
-    }
-  }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     // محاكاة تأخير الشبكة
@@ -54,7 +35,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (user) {
       setCurrentUser(user);
       setIsAdmin(user.role === 'admin');
-      localStorage.setItem('currentUser', JSON.stringify(user));
       
       if (user.organizationId) {
         const org = mockOrganizations.find(o => o.id === user.organizationId);
@@ -73,7 +53,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setCurrentUser(null);
     setIsAdmin(false);
     setUserOrganization(null);
-    localStorage.removeItem('currentUser');
   };
 
   return (
