@@ -54,6 +54,25 @@ const monthlyTrend = [
   { month: 'Jun', nps: 58, satisfaction: 90 },
 ];
 
+// Data for NPS score distribution
+const npsScoreDistribution = [
+  { score: 0, count: 2 },
+  { score: 1, count: 3 },
+  { score: 2, count: 1 },
+  { score: 3, count: 3 },
+  { score: 4, count: 2 },
+  { score: 5, count: 4 },
+  { score: 6, count: 3 },
+  { score: 7, count: 12 },
+  { score: 8, count: 15 },
+  { score: 9, count: 25 },
+  { score: 10, count: 30 }
+].map(item => ({
+  ...item,
+  // Add a category field to determine the color
+  category: item.score >= 9 ? 'promoter' : item.score >= 7 ? 'passive' : 'detractor'
+}));
+
 const COLORS = ['#22c55e', '#eab308', '#ef4444'];
 
 const StatsPage = () => {
@@ -255,19 +274,7 @@ const StatsPage = () => {
                 <div className="h-96">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
-                      data={[
-                        { score: 0, count: 2 },
-                        { score: 1, count: 3 },
-                        { score: 2, count: 1 },
-                        { score: 3, count: 3 },
-                        { score: 4, count: 2 },
-                        { score: 5, count: 4 },
-                        { score: 6, count: 3 },
-                        { score: 7, count: 12 },
-                        { score: 8, count: 15 },
-                        { score: 9, count: 25 },
-                        { score: 10, count: 30 }
-                      ]}
+                      data={npsScoreDistribution}
                       margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                     >
                       <CartesianGrid strokeDasharray="3 3" />
@@ -278,13 +285,17 @@ const StatsPage = () => {
                       <Bar 
                         dataKey="count" 
                         name={language === 'ar' ? 'عدد التقييمات' : 'Number of Ratings'}
-                        fill={(entry) => {
-                          const score = entry.score;
-                          if (score >= 9) return '#22c55e'; // Promoters
-                          if (score >= 7) return '#eab308'; // Passives
-                          return '#ef4444'; // Detractors
-                        }}
-                      />
+                      >
+                        {npsScoreDistribution.map((entry, index) => {
+                          let color = '#ef4444'; // Detractors (0-6)
+                          if (entry.score >= 9) {
+                            color = '#22c55e'; // Promoters (9-10)
+                          } else if (entry.score >= 7) {
+                            color = '#eab308'; // Passives (7-8)
+                          }
+                          return <Cell key={`cell-${index}`} fill={color} />;
+                        })}
+                      </Bar>
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
