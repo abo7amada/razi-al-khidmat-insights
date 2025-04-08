@@ -3,7 +3,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { BarChart3, FileText, Home, FilePlus, Users, Settings, LayoutDashboard, ChevronDown, AlertTriangle, CreditCard, LogOut, Store, LineChart, MapPin } from 'lucide-react';
+import { BarChart3, FileText, Home, FilePlus, Users, Settings, LayoutDashboard, ChevronDown, AlertTriangle, CreditCard, LogOut, Store, LineChart, MapPin, Building } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -22,7 +22,7 @@ import { ar } from 'date-fns/locale';
 
 interface LayoutProps {
   children: ReactNode;
-  currentPage: 'dashboard' | 'survey' | 'reports' | 'survey-creator' | 'analytics' | 'users' | 'sites' | 'vendor-settings' | 'insights' | 'evaluations' | 'complaints' | 'stats' | 'templates' | 'manual-entry';
+  currentPage: 'dashboard' | 'survey' | 'reports' | 'survey-creator' | 'analytics' | 'users' | 'sites' | 'vendor-settings' | 'insights' | 'evaluations' | 'complaints' | 'stats' | 'templates' | 'manual-entry' | 'companies';
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
@@ -96,14 +96,24 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                 <SidebarGroupContent>
                   <SidebarMenu>
                     {isSuperAdmin && (
-                      <SidebarMenuItem>
-                        <SidebarMenuButton asChild className={currentPage === 'dashboard' ? 'bg-accent' : ''}>
-                          <a href="/admin">
-                            <LayoutDashboard className="h-4 w-4" />
-                            <span>لوحة المدير الرئيسي</span>
-                          </a>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
+                      <>
+                        <SidebarMenuItem>
+                          <SidebarMenuButton asChild className={currentPage === 'dashboard' ? 'bg-accent' : ''}>
+                            <a href="/admin">
+                              <LayoutDashboard className="h-4 w-4" />
+                              <span>لوحة المدير الرئيسي</span>
+                            </a>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                        <SidebarMenuItem>
+                          <SidebarMenuButton asChild className={currentPage === 'companies' ? 'bg-accent' : ''}>
+                            <a href="/companies">
+                              <Building className="h-4 w-4" />
+                              <span>إدارة الشركات</span>
+                            </a>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      </>
                     )}
 
                     <SidebarMenuItem>
@@ -200,6 +210,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                   {currentPage === 'users' && t('users')}
                   {currentPage === 'sites' && t('sites')}
                   {currentPage === 'vendor-settings' && t('vendorSettings')}
+                  {currentPage === 'companies' && 'إدارة الشركات'}
                 </h1>
               </div>
               <div className="flex items-center gap-2">
