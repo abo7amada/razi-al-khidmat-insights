@@ -15,7 +15,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   allowedRoles,
   requireActiveSubscription = false
 }) => {
-  const { isAuthenticated, currentUser, userOrganization } = useAuth();
+  const { isAuthenticated, currentUser, userOrganization, isSuperAdmin } = useAuth();
   const location = useLocation();
 
   if (!isAuthenticated || !currentUser) {
@@ -31,8 +31,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     }
   }
 
-  // التحقق مما إذا كان الاشتراك نشطًا إذا كان مطلوبًا
-  if (requireActiveSubscription && currentUser.role !== 'super_admin') {
+  // تجاوز التحقق من الاشتراك للمستخدمين super_admin
+  if (requireActiveSubscription && !isSuperAdmin) {
     if (!userOrganization?.active) {
       // إذا كان الاشتراك غير نشط، قم بتوجيهه إلى صفحة تجديد الاشتراك
       return <Navigate to="/subscription-expired" replace />;

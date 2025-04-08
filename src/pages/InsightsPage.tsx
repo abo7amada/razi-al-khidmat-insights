@@ -6,7 +6,7 @@ import { useLanguage } from '../context/LanguageContext';
 const InsightsPage = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id?: string }>();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   useEffect(() => {
     // If we have a company ID, redirect to the insights overview page
@@ -21,7 +21,7 @@ const InsightsPage = () => {
     }
   }, [id, navigate]);
   
-  return <div>{t('redirecting')}...</div>;
+  return <div>{language === 'ar' ? 'جاري التحويل...' : 'Redirecting...'}</div>;
 };
 
 export default InsightsPage;

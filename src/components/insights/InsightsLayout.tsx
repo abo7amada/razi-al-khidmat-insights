@@ -48,10 +48,14 @@ const InsightsLayout: React.FC = () => {
     navigate(`/company/${id}/insights/${path}`);
   };
 
+  const getInsightsTitle = () => {
+    return language === 'ar' ? 'التحليلات والرؤى' : 'Insights';
+  };
+
   return (
     <Layout currentPage="insights">
       <div className="container mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-6">{t('insights')}</h1>
+        <h1 className="text-3xl font-bold mb-6">{getInsightsTitle()}</h1>
         
         <div className="mb-6">
           <NavigationMenu>
