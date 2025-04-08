@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { mockSurveys } from '../data/mockSurveys';
@@ -35,9 +36,9 @@ const SurveyList: React.FC<SurveyListProps> = ({ onCreateNew, onEdit }) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const [surveyToDelete, setSurveyToDelete] = React.useState<string | null>(null);
   
-  // Filter surveys based on the current user's company if applicable
-  const filteredSurveys = currentUser?.companyId 
-    ? mockSurveys.filter(survey => survey.companyId === currentUser.companyId)
+  // Filter surveys based on the current user's organization if applicable
+  const filteredSurveys = currentUser?.organizationId 
+    ? mockSurveys.filter(survey => survey.companyId === currentUser.organizationId)
     : mockSurveys;
   
   const handleDelete = (surveyId: string) => {
