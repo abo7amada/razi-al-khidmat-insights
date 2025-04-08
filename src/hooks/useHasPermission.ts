@@ -14,7 +14,7 @@ export const useHasPermission = () => {
   const { currentUser, userRole, isSuperAdmin } = useAuth();
   
   const hasPermission = (permission: PermissionTypes, branchId?: string): boolean => {
-    // Super admins have all permissions regardless of subscription status
+    // Super admins have ALL permissions regardless of subscription status or any other checks
     if (isSuperAdmin) {
       return true;
     }
