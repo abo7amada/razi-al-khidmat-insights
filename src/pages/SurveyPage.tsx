@@ -22,11 +22,7 @@ const SurveyPage = () => {
   
   return (
     <Layout currentPage="survey">
-      <SurveyList 
-        onCreateNew={handleCreateNew} 
-        onEdit={handleEdit} 
-        onViewResponses={handleViewResponses}
-      />
+      <SurveyForm />
     </Layout>
   );
 };
