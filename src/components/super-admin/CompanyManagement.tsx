@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,7 +41,6 @@ import { Calendar } from '@/components/ui/calendar';
 import { Building, Plus, Trash, Edit, Users, Eye, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { format } from 'date-fns';
-import { ar } from 'date-fns/locale';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -188,7 +188,7 @@ const CompanyManagement = () => {
     
     toast({
       title: 'تم تجديد الاشتراك بنجاح',
-      description: `تم تجديد اشتراك ${company.name} حتى ${format(newExpiryDate, 'dd/MM/yyyy', { locale: ar })}`,
+      description: `تم تجديد اشتراك ${company.name} حتى ${format(newExpiryDate, 'yyyy/MM/dd')}`,
     });
   };
   
@@ -324,7 +324,7 @@ const CompanyManagement = () => {
                               className={`w-full justify-start text-right ${!field.value && "text-muted-foreground"}`}
                             >
                               {field.value ? (
-                                format(field.value, "dd/MM/yyyy", { locale: ar })
+                                format(field.value, "yyyy/MM/dd")
                               ) : (
                                 <span>اختر التاريخ</span>
                               )}
@@ -411,7 +411,7 @@ const CompanyManagement = () => {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  {format(new Date(company.planExpiresAt), 'dd/MM/yyyy', { locale: ar })}
+                  {format(new Date(company.planExpiresAt), 'yyyy/MM/dd')}
                 </TableCell>
                 <TableCell>
                   {company.isActive ? (
@@ -538,7 +538,7 @@ const CompanyManagement = () => {
                             className={`w-full justify-start text-right ${!field.value && "text-muted-foreground"}`}
                           >
                             {field.value ? (
-                              format(field.value, "dd/MM/yyyy", { locale: ar })
+                              format(field.value, "yyyy/MM/dd")
                             ) : (
                               <span>اختر التاريخ</span>
                             )}
