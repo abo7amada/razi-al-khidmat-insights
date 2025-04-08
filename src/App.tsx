@@ -10,6 +10,7 @@ import ReportsPage from "./pages/ReportsPage";
 import NotFound from "./pages/NotFound";
 import SurveyCreatorPage from "./pages/SurveyCreatorPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
+import UsersPage from "./pages/UsersPage";
 import { LanguageProvider } from "./context/LanguageContext";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/survey-creator" element={<SurveyCreatorPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
+            <Route path="/users" element={<UsersPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

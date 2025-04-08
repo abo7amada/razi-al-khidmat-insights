@@ -3,12 +3,12 @@ import React, { ReactNode } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { BarChart3, FileText, Home, FilePlus } from 'lucide-react';
+import { BarChart3, FileText, Home, FilePlus, Users } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
 
 interface LayoutProps {
   children: ReactNode;
-  currentPage: 'dashboard' | 'survey' | 'reports' | 'survey-creator' | 'analytics';
+  currentPage: 'dashboard' | 'survey' | 'reports' | 'survey-creator' | 'analytics' | 'users';
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
@@ -68,6 +68,14 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                         </a>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild className={currentPage === 'users' ? 'bg-accent' : ''}>
+                        <a href="/users">
+                          <Users className="h-4 w-4" />
+                          <span>{t('users')}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                   </SidebarMenu>
                 </SidebarGroupContent>
               </SidebarGroup>
@@ -84,6 +92,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                   {currentPage === 'reports' && t('reports')}
                   {currentPage === 'survey-creator' && t('surveyCreator')}
                   {currentPage === 'analytics' && t('analytics')}
+                  {currentPage === 'users' && t('users')}
                 </h1>
               </div>
               <div className="flex items-center">
