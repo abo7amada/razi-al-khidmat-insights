@@ -31,6 +31,16 @@ const generateMockComments = (companyId: string) => {
       const site = mockSites.find(site => site.id === response.siteId);
       const survey = mockSurveyTemplates.find(survey => survey.id === response.surveyId);
       
+      // Calculate likert average if likertScores exist
+      let likertAvg: number | null = null;
+      if (response.likertScores) {
+        const values = Object.values(response.likertScores);
+        if (values.length > 0) {
+          const sum = values.reduce((acc, val) => acc + val, 0);
+          likertAvg = sum / values.length;
+        }
+      }
+      
       return {
         id: response.id,
         date: response.createdAt,
@@ -39,7 +49,7 @@ const generateMockComments = (companyId: string) => {
         surveyName: survey?.title || 'Unknown Survey',
         surveyId: response.surveyId,
         nps: response.npsScore || null,
-        likertAvg: response.likertScores ? Object.values(response.likertScores).reduce((sum, val) => sum + val, 0) / Object.values(response.likertScores).length : null,
+        likertAvg: likertAvg,
         sentiment: analyzeSentiment(response.comment || '') as 'positive' | 'neutral' | 'negative',
         comment: response.comment || '',
         respondentId: response.id
