@@ -23,7 +23,7 @@ import { ar } from 'date-fns/locale';
 
 interface LayoutProps {
   children: ReactNode;
-  currentPage: 'dashboard' | 'survey' | 'reports' | 'survey-creator' | 'analytics' | 'users' | 'locations' | 'sites' | 'vendor-settings' | 'insights';
+  currentPage: 'dashboard' | 'survey' | 'reports' | 'survey-creator' | 'analytics' | 'users' | 'locations' | 'sites' | 'vendor-settings' | 'insights' | 'evaluations' | 'complaints' | 'stats' | 'templates' | 'manual-entry';
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
@@ -302,3 +302,4 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
 };
 
 export default Layout;
+

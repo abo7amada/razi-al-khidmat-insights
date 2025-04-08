@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { useLanguage } from '../context/LanguageContext';
@@ -147,7 +146,7 @@ const ManualEntryPage = () => {
   ];
   
   return (
-    <Layout currentPage="manual-entry">
+    <Layout currentPage="reports">
       <div className="container mx-auto p-6">
         <h1 className="text-3xl font-bold mb-6">
           {language === 'ar' ? 'إدخال يدوي' : 'Manual Entry'}

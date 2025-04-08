@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { useLanguage } from '../context/LanguageContext';
-import { mockResponses, Response } from '../types/company';
+import { mockResponses, Response, mockSites } from '../types/company';
 import { 
   Table, 
   TableBody, 
@@ -74,15 +74,15 @@ const EvaluationsPage = () => {
   };
   
   // Filter evaluations based on selected criteria
-  const filteredEvaluations = evaluations.filter(eval => {
+  const filteredEvaluations = evaluations.filter(evaluation => {
     // Filter by keyword in comment
-    if (keyword && eval.comment && !eval.comment.toLowerCase().includes(keyword.toLowerCase())) {
+    if (keyword && evaluation.comment && !evaluation.comment.toLowerCase().includes(keyword.toLowerCase())) {
       return false;
     }
     
     // Filter by NPS score
     if (npsFilter !== 'all') {
-      const npsCategory = getNpsCategory(eval.npsScore);
+      const npsCategory = getNpsCategory(evaluation.npsScore);
       if (npsFilter === 'promoter' && (!npsCategory || npsCategory.label !== (language === 'ar' ? 'مروج' : 'Promoter'))) {
         return false;
       }
