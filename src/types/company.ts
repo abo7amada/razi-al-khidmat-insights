@@ -1,4 +1,3 @@
-
 export type UserRole = 
   'super_admin' | 
   'system_admin' | 
@@ -42,6 +41,56 @@ export interface SubscriptionLog {
   validTo: string;
   createdAt: string;
   createdBy: string;
+}
+
+// New types for feedback system
+export type SurveyType = "NPS" | "LIKERT";
+export type ComplaintStatus = "new" | "in_progress" | "resolved";
+
+export interface SurveyTemplate {
+  id: string;
+  companyId: string;
+  type: SurveyType;
+  title: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  isActive: boolean;
+}
+
+export interface Question {
+  id: string;
+  templateId: string;
+  textAr: string;
+  textEn: string;
+  order: number;
+  scale: '0-10' | '1-5';
+}
+
+export interface Response {
+  id: string;
+  surveyId: string;
+  siteId: string;
+  companyId: string;
+  npsScore?: number;
+  likertScores?: Record<string, number>;
+  comment?: string;
+  createdAt: string;
+  customerName?: string;
+}
+
+export interface Complaint {
+  id: string;
+  siteId: string;
+  companyId: string;
+  customerName: string;
+  phone: string;
+  issueType: string;
+  description: string;
+  status: ComplaintStatus;
+  createdAt: string;
+  updatedAt: string;
+  assignedTo?: string;
 }
 
 // Mock data for companies
@@ -204,5 +253,144 @@ export const mockSubscriptionLogs: SubscriptionLog[] = [
     validTo: '2025-06-15T00:00:00Z',
     createdAt: '2024-06-15T00:00:00Z',
     createdBy: 'admin1'
+  }
+];
+
+// Mock data for survey templates
+export const mockSurveyTemplates: SurveyTemplate[] = [
+  {
+    id: 'template1',
+    companyId: 'comp1',
+    type: 'NPS',
+    title: 'استبيان رضا العملاء القياسي',
+    description: 'استبيان قياسي لقياس مدى رضا العملاء وإمكانية توصيتهم لخدماتنا',
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+    isActive: true
+  },
+  {
+    id: 'template2',
+    companyId: 'comp1',
+    type: 'LIKERT',
+    title: 'استبيان جودة الخدمة',
+    description: 'استبيان لتقييم جوانب مختلفة من جودة الخدمة المقدمة',
+    createdAt: '2024-01-15T00:00:00Z',
+    updatedAt: '2024-01-15T00:00:00Z',
+    isActive: true
+  }
+];
+
+// Mock data for questions
+export const mockQuestions: Question[] = [
+  {
+    id: 'q1',
+    templateId: 'template1',
+    textAr: 'ما مدى احتمال أن توصي خدماتنا لصديق أو زميل؟',
+    textEn: 'How likely are you to recommend our services to a friend or colleague?',
+    order: 1,
+    scale: '0-10'
+  },
+  {
+    id: 'q2',
+    templateId: 'template2',
+    textAr: 'ما مدى رضاك عن نظافة المكان؟',
+    textEn: 'How satisfied are you with the cleanliness of the venue?',
+    order: 1,
+    scale: '1-5'
+  },
+  {
+    id: 'q3',
+    templateId: 'template2',
+    textAr: 'ما مدى رضاك عن جودة الخدمة المقدمة؟',
+    textEn: 'How satisfied are you with the quality of service provided?',
+    order: 2,
+    scale: '1-5'
+  },
+  {
+    id: 'q4',
+    templateId: 'template2',
+    textAr: 'ما مدى رضاك عن سرعة الاستجابة؟',
+    textEn: 'How satisfied are you with the response time?',
+    order: 3,
+    scale: '1-5'
+  }
+];
+
+// Mock responses data
+export const mockResponses: Response[] = [
+  {
+    id: 'resp1',
+    surveyId: 'template1',
+    siteId: 'site1',
+    companyId: 'comp1',
+    npsScore: 9,
+    comment: 'خدمة ممتازة، شكراً!',
+    createdAt: '2024-03-01T10:15:00Z',
+    customerName: 'أحمد محمد'
+  },
+  {
+    id: 'resp2',
+    surveyId: 'template1',
+    siteId: 'site2',
+    companyId: 'comp1',
+    npsScore: 7,
+    comment: 'جيد، ولكن يمكن تحسين السرعة',
+    createdAt: '2024-03-02T11:30:00Z',
+    customerName: 'سارة أحمد'
+  },
+  {
+    id: 'resp3',
+    surveyId: 'template2',
+    siteId: 'site1',
+    companyId: 'comp1',
+    likertScores: {
+      'q2': 4,
+      'q3': 5,
+      'q4': 3
+    },
+    comment: 'جودة الخدمة ممتازة، لكن الاستجابة كانت بطيئة قليلاً',
+    createdAt: '2024-03-03T14:45:00Z',
+    customerName: 'محمد علي'
+  }
+];
+
+// Mock complaints data
+export const mockComplaints: Complaint[] = [
+  {
+    id: 'comp1',
+    siteId: 'site1',
+    companyId: 'comp1',
+    customerName: 'خالد إبراهيم',
+    phone: '+966501234567',
+    issueType: 'جودة المنتج',
+    description: 'المنتج لا يعمل بشكل صحيح بعد الاستخدام الأول',
+    status: 'new',
+    createdAt: '2024-03-01T09:20:00Z',
+    updatedAt: '2024-03-01T09:20:00Z'
+  },
+  {
+    id: 'comp2',
+    siteId: 'site2',
+    companyId: 'comp1',
+    customerName: 'فاطمة محمد',
+    phone: '+966512345678',
+    issueType: 'تأخير الخدمة',
+    description: 'انتظرت أكثر من ساعة للحصول على الخدمة المطلوبة',
+    status: 'in_progress',
+    createdAt: '2024-03-02T13:15:00Z',
+    updatedAt: '2024-03-02T15:30:00Z',
+    assignedTo: 'employee1'
+  },
+  {
+    id: 'comp3',
+    siteId: 'site1',
+    companyId: 'comp1',
+    customerName: 'عبدالله علي',
+    phone: '+966523456789',
+    issueType: 'فاتورة خاطئة',
+    description: 'تم احتساب خدمات إضافية لم أطلبها في الفاتورة',
+    status: 'resolved',
+    createdAt: '2024-03-03T10:45:00Z',
+    updatedAt: '2024-03-04T09:30:00Z'
   }
 ];

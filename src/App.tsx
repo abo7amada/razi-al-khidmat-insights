@@ -22,6 +22,12 @@ import SubscriptionExpiredPage from "./pages/SubscriptionExpiredPage";
 import { LanguageProvider } from "./context/LanguageContext";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import CustomerSurveyPage from "./pages/CustomerSurveyPage";
+import EvaluationsPage from "./pages/EvaluationsPage";
+import ComplaintsPage from "./pages/ComplaintsPage";
+import StatsPage from "./pages/StatsPage";
+import TemplateLibraryPage from "./pages/TemplateLibraryPage";
+import ManualEntryPage from "./pages/ManualEntryPage";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
@@ -32,6 +38,9 @@ const AppRoutes = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
       <Route path="/subscription-expired" element={<SubscriptionExpiredPage />} />
+      
+      {/* Public survey page */}
+      <Route path="/survey" element={<CustomerSurveyPage />} />
       
       {/* مسارات المدير الرئيسي */}
       <Route path="/admin" element={
@@ -89,6 +98,33 @@ const AppRoutes = () => {
       <Route path="/vendor-settings" element={
         <ProtectedRoute allowedRoles={['super_admin', 'system_admin']}>
           <VendorSettingsPage />
+        </ProtectedRoute>
+      } />
+      
+      {/* New feedback routes */}
+      <Route path="/company/:id/evaluations" element={
+        <ProtectedRoute allowedRoles={['super_admin', 'system_admin', 'company_admin', 'company_owner', 'editor', 'viewer', 'branchManager']}>
+          <EvaluationsPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/company/:id/complaints" element={
+        <ProtectedRoute allowedRoles={['super_admin', 'system_admin', 'company_admin', 'company_owner', 'editor', 'branchManager']}>
+          <ComplaintsPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/company/:id/reports" element={
+        <ProtectedRoute allowedRoles={['super_admin', 'system_admin', 'company_admin', 'company_owner', 'editor', 'viewer', 'branchManager']}>
+          <StatsPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/company/:id/templates" element={
+        <ProtectedRoute allowedRoles={['super_admin', 'system_admin', 'company_admin', 'company_owner', 'editor']}>
+          <TemplateLibraryPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/company/:id/manual-entry" element={
+        <ProtectedRoute allowedRoles={['super_admin', 'system_admin', 'company_admin', 'company_owner', 'editor', 'branchManager']}>
+          <ManualEntryPage />
         </ProtectedRoute>
       } />
       
