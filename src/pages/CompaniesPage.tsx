@@ -15,7 +15,7 @@ const CompaniesPage = () => {
   }
   
   return (
-    <ProtectedRoute allowedRoles={['super_admin', 'system_admin']}>
+    <ProtectedRoute allowedRoles={['super_admin', 'system_admin', 'admin']}>
       <Layout currentPage="companies">
         <Card>
           <CardHeader>

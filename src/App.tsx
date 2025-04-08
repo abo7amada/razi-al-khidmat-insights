@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -40,6 +39,7 @@ import SentimentAnalysisPage from "./pages/insights/SentimentAnalysisPage";
 import SmartAlertsPage from "./pages/insights/SmartAlertsPage";
 import AdvancedSegmentationPage from "./pages/insights/AdvancedSegmentationPage";
 import ComingSoonPage from "./pages/insights/ComingSoonPage";
+import CompaniesPage from "./pages/CompaniesPage";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
@@ -64,8 +64,8 @@ const AppRoutes = () => {
       
       {/* رابط خاص بإدارة الشركات */}
       <Route path="/companies" element={
-        <ProtectedRoute allowedRoles={['super_admin', 'system_admin']}>
-          <SuperAdminPage />
+        <ProtectedRoute allowedRoles={['super_admin', 'system_admin', 'admin']}>
+          <CompaniesPage />
         </ProtectedRoute>
       } />
       

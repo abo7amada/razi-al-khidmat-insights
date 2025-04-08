@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, mockUsers, Organization, mockOrganizations } from '../components/vendor-settings/types';
 import { UserRole } from '../types/company';
@@ -21,7 +22,7 @@ interface AuthContextType {
   isEditor: boolean;
   isViewer: boolean;
   isAdmin: boolean;
-  canManageCompanies: boolean; // إضافة خاصية للتحكم بإمكانية إدارة الشركات
+  canManageCompanies: boolean; // خاصية للتحكم بإمكانية إدارة الشركات
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -41,7 +42,7 @@ const AuthContext = createContext<AuthContextType>({
   isEditor: false,
   isViewer: false,
   isAdmin: false,
-  canManageCompanies: false // إضافة القيمة الافتراضية
+  canManageCompanies: false // القيمة الافتراضية
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -135,8 +136,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // خاصية للتحقق مما إذا كان المستخدم مسؤولًا بأي شكل
   const isAdmin = isSuperAdmin || isSystemAdmin || isCompanyAdmin || isCompanyOwner;
   
-  // خاصية جديدة للتحقق مما إذا كان المستخدم يستطيع إدارة الشركات
-  const canManageCompanies = isSuperAdmin || isSystemAdmin;
+  // تحديث خاصية التحكم بإمكانية إدارة الشركات لتشمل دور admin أيضًا
+  const canManageCompanies = isSuperAdmin || isSystemAdmin || currentUser?.role === 'admin';
   
   // Set current company from the user organization
   const currentCompany = userOrganization ? { id: userOrganization.id } : null;
@@ -163,7 +164,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isEditor,
         isViewer,
         isAdmin,
-        canManageCompanies // إضافة الخاصية الجديدة
+        canManageCompanies // إضافة الخاصية
       }}
     >
       {children}
