@@ -55,6 +55,16 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ onSelectLocation, s
     });
   };
 
+  // Filter locations based on search query
+  const filteredLocations = searchQuery 
+    ? locations.filter(location => {
+        const nameEn = location.nameEn.toLowerCase();
+        const nameAr = location.nameAr.toLowerCase();
+        const query = searchQuery.toLowerCase();
+        return nameEn.includes(query) || nameAr.includes(query);
+      })
+    : locations;
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -78,7 +88,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ onSelectLocation, s
           />
           <CommandEmpty>{language === 'ar' ? 'لا توجد مواقع' : 'No locations found.'}</CommandEmpty>
           <CommandGroup>
-            {locations.map((location) => (
+            {filteredLocations.map((location) => (
               <CommandItem
                 key={location.id}
                 value={location.id}
