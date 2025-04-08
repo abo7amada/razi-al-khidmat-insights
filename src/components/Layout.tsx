@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { BarChart3, FileText, Home, FilePlus, Users, MapPin } from 'lucide-react';
+import { BarChart3, FileText, Home, FilePlus, Users, MapPin, Settings } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
 
 interface LayoutProps {
@@ -19,7 +19,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
     <div dir={dir} className={`min-h-screen bg-background ${dir === 'rtl' ? 'font-arabic' : ''}`}>
       <SidebarProvider defaultOpen={!isMobile}>
         <div className="flex min-h-screen w-full">
-          <Sidebar>
+          <Sidebar side={dir === 'rtl' ? 'right' : 'left'}>
             <SidebarContent>
               <div className="mb-4 p-4">
                 <h2 className="font-bold text-lg text-primary">{t('appTitle')}</h2>
@@ -81,6 +81,14 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                         <a href="/locations">
                           <MapPin className="h-4 w-4" />
                           <span>{t('locations')}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild>
+                        <a href="/vendor-settings">
+                          <Settings className="h-4 w-4" />
+                          <span>{t('vendorSettings')}</span>
                         </a>
                       </SidebarMenuButton>
                     </SidebarMenuItem>

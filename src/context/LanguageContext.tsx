@@ -223,6 +223,58 @@ const translations: Translations = {
   analytics: {
     ar: 'التحليلات',
     en: 'Analytics',
+  },
+  users: {
+    ar: 'المستخدمين',
+    en: 'Users',
+  },
+  locations: {
+    ar: 'المواقع',
+    en: 'Locations',
+  },
+  shareSurvey: {
+    ar: 'مشاركة الاستبيان',
+    en: 'Share Survey',
+  },
+  copy: {
+    ar: 'نسخ',
+    en: 'Copy',
+  },
+  copied: {
+    ar: 'تم النسخ',
+    en: 'Copied',
+  },
+  shareVia: {
+    ar: 'مشاركة عبر',
+    en: 'Share via',
+  },
+  email: {
+    ar: 'البريد الإلكتروني',
+    en: 'Email',
+  },
+  whatsapp: {
+    ar: 'واتساب',
+    en: 'WhatsApp',
+  },
+  twitter: {
+    ar: 'تويتر',
+    en: 'Twitter',
+  },
+  facebook: {
+    ar: 'فيسبوك',
+    en: 'Facebook',
+  },
+  multiVendor: {
+    ar: 'متعدد البائعين',
+    en: 'Multi-Vendor',
+  },
+  vendorSettings: {
+    ar: 'إعدادات البائع',
+    en: 'Vendor Settings',
+  },
+  organizationName: {
+    ar: 'اسم المؤسسة',
+    en: 'Organization Name',
   }
 };
 

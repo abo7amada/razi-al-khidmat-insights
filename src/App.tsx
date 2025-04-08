@@ -12,6 +12,7 @@ import SurveyCreatorPage from "./pages/SurveyCreatorPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import UsersPage from "./pages/UsersPage";
 import LocationsPage from "./pages/LocationsPage";
+import VendorSettingsPage from "./pages/VendorSettingsPage";
 import { LanguageProvider } from "./context/LanguageContext";
 
 // Create a new QueryClient instance
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/analytics" element={<AnalyticsPage />} />
             <Route path="/users" element={<UsersPage />} />
             <Route path="/locations" element={<LocationsPage />} />
+            <Route path="/vendor-settings" element={<VendorSettingsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
