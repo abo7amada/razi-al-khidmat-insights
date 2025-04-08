@@ -7,7 +7,7 @@ import { BarChart3, FileText, Home, FilePlus } from 'lucide-react';
 
 interface LayoutProps {
   children: ReactNode;
-  currentPage: 'dashboard' | 'survey' | 'reports' | 'survey-creator';
+  currentPage: 'dashboard' | 'survey' | 'reports' | 'survey-creator' | 'analytics';
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
@@ -58,6 +58,14 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                         </a>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild className={currentPage === 'analytics' ? 'bg-accent' : ''}>
+                        <a href="/analytics">
+                          <BarChart3 />
+                          <span>{t('analytics')}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                   </SidebarMenu>
                 </SidebarGroupContent>
               </SidebarGroup>
@@ -73,6 +81,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                   {currentPage === 'survey' && t('survey')}
                   {currentPage === 'reports' && t('reports')}
                   {currentPage === 'survey-creator' && t('surveyCreator')}
+                  {currentPage === 'analytics' && t('analytics')}
                 </h1>
               </div>
               <div className="flex items-center">

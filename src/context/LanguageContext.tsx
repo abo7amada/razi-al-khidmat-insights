@@ -219,6 +219,10 @@ const translations: Translations = {
   status: {
     ar: 'الحالة',
     en: 'Status',
+  },
+  analytics: {
+    ar: 'التحليلات',
+    en: 'Analytics',
   }
 };
 
@@ -250,7 +254,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   );
 };
 
-export const useLanguage = () => {
+export const useLanguage = (): LanguageContextType => {
   const context = useContext(LanguageContext);
   if (context === undefined) {
     throw new Error('useLanguage must be used within a LanguageProvider');

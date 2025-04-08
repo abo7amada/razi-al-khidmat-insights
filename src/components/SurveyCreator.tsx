@@ -82,7 +82,7 @@ const SurveyCreator: React.FC = () => {
         <SurveyEditor 
           surveyId={editingSurveyId} 
           onCancel={handleCancel}
-          onSaveSuccess={handleSaveSuccess}
+          onSave={handleSaveSuccess}
         />
       )}
     </div>
