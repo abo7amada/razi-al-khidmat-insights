@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -349,6 +350,7 @@ const CompanyManagement = () => {
                     </FormItem>
                   )}
                 />
+                {/* Fix the Checkbox implementation */}
                 <FormField
                   control={createForm.control}
                   name="isActive"
@@ -358,10 +360,11 @@ const CompanyManagement = () => {
                         <Checkbox
                           checked={field.value}
                           onCheckedChange={field.onChange}
+                          id="isActive-create"
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none mr-2">
-                        <FormLabel>نشط</FormLabel>
+                        <FormLabel htmlFor="isActive-create">نشط</FormLabel>
                       </div>
                     </FormItem>
                   )}
@@ -563,6 +566,7 @@ const CompanyManagement = () => {
                   </FormItem>
                 )}
               />
+              {/* Fix the Checkbox implementation in the edit form as well */}
               <FormField
                 control={editForm.control}
                 name="isActive"
@@ -572,10 +576,11 @@ const CompanyManagement = () => {
                       <Checkbox
                         checked={field.value}
                         onCheckedChange={field.onChange}
+                        id="isActive-edit"
                       />
                     </FormControl>
                     <div className="space-y-1 leading-none mr-2">
-                      <FormLabel>نشط</FormLabel>
+                      <FormLabel htmlFor="isActive-edit">نشط</FormLabel>
                     </div>
                   </FormItem>
                 )}
