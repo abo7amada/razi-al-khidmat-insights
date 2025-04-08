@@ -1,16 +1,16 @@
-
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import CompanyManagement from '../components/super-admin/CompanyManagement';
 import BillingManagement from '../components/super-admin/BillingManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '../context/AuthContext';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate, Link, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { mockCompanies } from '../types/company';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'; // Added this import
 
 const SuperAdminPage = () => {
   const { isSuperAdmin } = useAuth();
@@ -39,31 +39,34 @@ const SuperAdminPage = () => {
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">لوحة تحكم المدير الرئيسي</h1>
             <Button asChild variant="outline">
-              <Link to="/admin">
+              <Link to="/companies">
                 <Building className="w-4 h-4 ml-2" />
                 إدارة الشركات
               </Link>
             </Button>
           </div>
           
-          {companies.length === 0 && !isLoading && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>تنبيه</AlertTitle>
-              <AlertDescription>
-                لم يتم العثور على أي شركات في النظام. يرجى إضافة شركات جديدة.
-              </AlertDescription>
-            </Alert>
-          )}
-          
-          <Tabs defaultValue="companies" value={activeTab} onValueChange={setActiveTab}>
+          <Tabs defaultValue="dashboard" value={activeTab} onValueChange={setActiveTab}>
             <TabsList>
-              <TabsTrigger value="companies">الشركات</TabsTrigger>
+              <TabsTrigger value="dashboard">لوحة القيادة</TabsTrigger>
               <TabsTrigger value="billing">الفواتير والاشتراكات</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="companies" className="mt-4">
-              <CompanyManagement />
+            <TabsContent value="dashboard" className="mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>إحصائيات الشركات</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p>إجمالي الشركات: {companies.length}</p>
+                    <p>شركات نشطة: {companies.filter(c => c.isActive).length}</p>
+                    <p>شركات غير نشطة: {companies.filter(c => !c.isActive).length}</p>
+                  </CardContent>
+                </Card>
+                
+                {/* يمكن إضافة المزيد من البطاقات للإحصائيات هنا */}
+              </div>
             </TabsContent>
             
             <TabsContent value="billing" className="mt-4">
