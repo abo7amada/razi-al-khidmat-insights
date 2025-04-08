@@ -1,4 +1,5 @@
-import { UserRole } from '../../types/company';
+
+import { UserRole, Company, Site, SubscriptionLog, SurveyTemplate, Question, Response, Complaint } from '../../types/company';
 
 export interface Organization {
   id: string;
@@ -134,7 +135,8 @@ export const mockUsers: User[] = [
   }
 ];
 
-// Mock data for companies
+// Using imported types from company.ts for the mock data
+// Mock data for companies - using the imported Company type
 export const mockCompanies: Company[] = [
   {
     id: 'comp1',
@@ -171,7 +173,7 @@ export const mockCompanies: Company[] = [
   }
 ];
 
-// Mock data for sites
+// Mock data for sites - using the imported Site type
 export const mockSites: Site[] = [
   {
     id: 'site1',
@@ -223,7 +225,7 @@ export const mockSites: Site[] = [
   }
 ];
 
-// Mock subscription logs
+// Mock subscription logs - using the imported SubscriptionLog type
 export const mockSubscriptionLogs: SubscriptionLog[] = [
   {
     id: 'log1',
@@ -297,7 +299,7 @@ export const mockSubscriptionLogs: SubscriptionLog[] = [
   }
 ];
 
-// Mock data for survey templates
+// Mock data for survey templates - using the imported SurveyTemplate type
 export const mockSurveyTemplates: SurveyTemplate[] = [
   {
     id: 'template1',
@@ -321,7 +323,7 @@ export const mockSurveyTemplates: SurveyTemplate[] = [
   }
 ];
 
-// Mock data for questions
+// Mock data for questions - using the imported Question type
 export const mockQuestions: Question[] = [
   {
     id: 'q1',
@@ -357,8 +359,8 @@ export const mockQuestions: Question[] = [
   }
 ];
 
-// Mock responses data
-export const mockResponses: Response[] = [
+// Mock responses data - using the imported Response type
+export const mockResponses = [
   {
     id: 'resp1',
     surveyId: 'template1',
@@ -393,9 +395,9 @@ export const mockResponses: Response[] = [
     createdAt: '2024-03-03T14:45:00Z',
     customerName: 'محمد علي'
   }
-];
+] as Response[];
 
-// Mock complaints data
+// Mock complaints data - using the imported Complaint type
 export const mockComplaints: Complaint[] = [
   {
     id: 'comp1',
