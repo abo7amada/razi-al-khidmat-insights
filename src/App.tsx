@@ -14,8 +14,12 @@ import UsersPage from "./pages/UsersPage";
 import LocationsPage from "./pages/LocationsPage";
 import VendorSettingsPage from "./pages/VendorSettingsPage";
 import LoginPage from "./pages/LoginPage";
+import SuperAdminPage from "./pages/SuperAdminPage";
+import UnauthorizedPage from "./pages/UnauthorizedPage";
+import SubscriptionExpiredPage from "./pages/SubscriptionExpiredPage";
 import { LanguageProvider } from "./context/LanguageContext";
 import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
@@ -24,14 +28,58 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/" element={<Index />} />
-      <Route path="/survey" element={<SurveyPage />} />
-      <Route path="/reports" element={<ReportsPage />} />
-      <Route path="/survey-creator" element={<SurveyCreatorPage />} />
-      <Route path="/analytics" element={<AnalyticsPage />} />
-      <Route path="/users" element={<UsersPage />} />
-      <Route path="/locations" element={<LocationsPage />} />
-      <Route path="/vendor-settings" element={<VendorSettingsPage />} />
+      <Route path="/unauthorized" element={<UnauthorizedPage />} />
+      <Route path="/subscription-expired" element={<SubscriptionExpiredPage />} />
+      
+      {/* مسارات المدير الرئيسي */}
+      <Route path="/admin" element={
+        <ProtectedRoute allowedRoles={['super_admin']}>
+          <SuperAdminPage />
+        </ProtectedRoute>
+      } />
+      
+      {/* المسارات المحمية التي تتطلب تسجيل الدخول واشتراكًا نشطًا */}
+      <Route path="/" element={
+        <ProtectedRoute>
+          <Index />
+        </ProtectedRoute>
+      } />
+      <Route path="/survey" element={
+        <ProtectedRoute requireActiveSubscription>
+          <SurveyPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/reports" element={
+        <ProtectedRoute requireActiveSubscription>
+          <ReportsPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/survey-creator" element={
+        <ProtectedRoute requireActiveSubscription allowedRoles={['super_admin', 'company_admin', 'editor']}>
+          <SurveyCreatorPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/analytics" element={
+        <ProtectedRoute requireActiveSubscription>
+          <AnalyticsPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/users" element={
+        <ProtectedRoute allowedRoles={['super_admin', 'company_admin']}>
+          <UsersPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/locations" element={
+        <ProtectedRoute>
+          <LocationsPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/vendor-settings" element={
+        <ProtectedRoute allowedRoles={['super_admin']}>
+          <VendorSettingsPage />
+        </ProtectedRoute>
+      } />
+      
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
@@ -39,17 +87,17 @@ const AppRoutes = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <LanguageProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
+        <LanguageProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
             <AppRoutes />
-          </BrowserRouter>
-        </TooltipProvider>
-      </LanguageProvider>
-    </AuthProvider>
+          </TooltipProvider>
+        </LanguageProvider>
+      </AuthProvider>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 

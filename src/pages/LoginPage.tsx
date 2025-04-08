@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,7 +15,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 const loginSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email({ message: 'يرجى إدخال بريد إلكتروني صالح' }),
   password: z.string().min(6, { message: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' }),
 });
 
@@ -23,10 +23,19 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 const LoginPage = () => {
   const { t, language } = useLanguage();
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
+  
+  // إذا كان المستخدم مسجلاً بالفعل، قم بتوجيهه إلى الصفحة الرئيسية
+  useEffect(() => {
+    if (isAuthenticated) {
+      const from = location.state?.from?.pathname || '/';
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, location]);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -42,11 +51,11 @@ const LoginPage = () => {
       const success = await login(data.email, data.password);
       
       if (success) {
+        // تم تسجيل الدخول بنجاح - يتم التوجيه في useEffect عند تغيير isAuthenticated
         toast({
           title: t('loginSuccess'),
           description: t('welcomeBack'),
         });
-        navigate('/');
       } else {
         toast({
           title: t('loginFailed'),
@@ -128,6 +137,17 @@ const LoginPage = () => {
               </form>
             </Form>
           </CardContent>
+          <CardFooter className="justify-center">
+            <div className="text-center text-sm">
+              <p>{language === 'ar' ? 'بيانات الدخول التجريبية:' : 'Demo credentials:'}</p>
+              <p className="text-muted-foreground">
+                {language === 'ar' ? 'مدير النظام: admin@system.com / admin123' : 'Super Admin: admin@system.com / admin123'}
+              </p>
+              <p className="text-muted-foreground">
+                {language === 'ar' ? 'مدير شركة: admin@alnoor-tech.com / password123' : 'Company Admin: admin@alnoor-tech.com / password123'}
+              </p>
+            </div>
+          </CardFooter>
         </Card>
       </div>
     </div>

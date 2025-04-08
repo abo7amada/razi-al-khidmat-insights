@@ -2,8 +2,10 @@
 export interface SurveyQuestion {
   id: string;
   text: string;
+  textEn?: string;  // للنسخة الإنجليزية
   type: 'multiple-choice' | 'rating' | 'text' | 'yes-no' | 'dropdown' | 'matrix' | 'date' | 'image';
   options?: string[];
+  optionsEn?: string[]; // للنسخة الإنجليزية
   required: boolean;
   dependsOn?: {
     questionId: string;
@@ -15,22 +17,27 @@ export interface SurveyQuestion {
   imageSrc?: string;
   matrixRows?: string[];
   matrixColumns?: string[];
+  companyId: string;  // إضافة ربط للشركة
 }
 
 export interface Survey {
   id: string;
   title: string;
+  titleEn?: string; // للنسخة الإنجليزية
   description: string;
+  descriptionEn?: string; // للنسخة الإنجليزية
   questions: SurveyQuestion[];
   createdAt: string;
   status: 'active' | 'inactive' | 'draft' | 'archived' | 'scheduled';
   responseCount: number;
-  createdBy?: string;
+  createdBy: string;
+  companyId: string;  // إضافة ربط للشركة
   location?: string;
   startDate?: string;
   endDate?: string;
   targetAudience?: string;
   tags?: string[];
+  language?: 'ar' | 'en' | 'both';
 }
 
 export interface SurveyResponse {
@@ -46,6 +53,7 @@ export interface SurveyResponse {
   completionTime?: number; // in seconds
   deviceType?: 'desktop' | 'mobile' | 'tablet';
   ipAddress?: string;
+  companyId: string;  // إضافة ربط للشركة
 }
 
 export interface SurveyAnalytics {
@@ -67,6 +75,7 @@ export interface SurveyAnalytics {
   };
   locationBreakdown?: Record<string, number>;
   timeOfDayBreakdown?: Record<string, number>;
+  companyId: string;  // إضافة ربط للشركة
 }
 
 export interface SurveySettings {
@@ -76,6 +85,7 @@ export interface SurveySettings {
   shuffleQuestions: boolean;
   redirectUrl?: string;
   thankYouMessage?: string;
+  thankYouMessageEn?: string; // للنسخة الإنجليزية
   theme?: {
     primaryColor: string;
     backgroundColor: string;
@@ -88,4 +98,5 @@ export interface SurveySettings {
   password?: string;
   ipRestriction?: boolean;
   oneResponsePerUser?: boolean;
+  companyId: string;  // إضافة ربط للشركة
 }

@@ -1,10 +1,25 @@
 
 import React, { ReactNode } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { BarChart3, FileText, Home, FilePlus, Users, MapPin, Settings } from 'lucide-react';
+import { BarChart3, FileText, Home, FilePlus, Users, MapPin, Settings, LayoutDashboard, ChevronDown, AlertTriangle, CreditCard, LogOut } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
+import { ar } from 'date-fns/locale';
 
 interface LayoutProps {
   children: ReactNode;
@@ -12,8 +27,21 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
-  const { t, dir } = useLanguage();
+  const { t, dir, language } = useLanguage();
+  const { currentUser, userOrganization, logout, isSuperAdmin } = useAuth();
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
+  
+  const isSubscriptionExpired = userOrganization && !userOrganization.active;
+  const isNearExpiry = userOrganization ? (
+    () => {
+      if (!userOrganization.planExpiresAt) return false;
+      const expiryDate = new Date(userOrganization.planExpiresAt);
+      const today = new Date();
+      const daysToExpiry = Math.floor((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      return daysToExpiry <= 30 && daysToExpiry > 0;
+    }
+  )() : false;
 
   return (
     <div dir={dir} className={`min-h-screen bg-background ${dir === 'rtl' ? 'font-arabic' : ''}`}>
@@ -22,12 +50,63 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
           <Sidebar side={dir === 'rtl' ? 'right' : 'left'}>
             <SidebarContent>
               <div className="mb-4 p-4">
-                <h2 className="font-bold text-lg text-primary">{t('appTitle')}</h2>
+                {userOrganization ? (
+                  <div className="flex flex-col items-center text-center">
+                    <Avatar className="h-16 w-16 mb-2">
+                      {userOrganization.logoUrl ? (
+                        <img src={userOrganization.logoUrl} alt={userOrganization.name} />
+                      ) : (
+                        <AvatarFallback>{userOrganization.name.substring(0, 1)}</AvatarFallback>
+                      )}
+                    </Avatar>
+                    <h2 className="font-bold text-base text-primary">{userOrganization.name}</h2>
+                    <div className="flex items-center mt-1">
+                      <Badge variant={userOrganization.plan === 'free' ? 'outline' : 'default'}>
+                        {userOrganization.plan === 'free' ? 'مجاني' : 
+                         userOrganization.plan === 'basic' ? 'أساسي' :
+                         userOrganization.plan === 'premium' ? 'متميز' : 'مؤسسات'}
+                      </Badge>
+                    </div>
+                  </div>
+                ) : (
+                  <h2 className="font-bold text-lg text-primary text-center">
+                    {isSuperAdmin ? 'مدير النظام' : t('appTitle')}
+                  </h2>
+                )}
+                
+                {isSubscriptionExpired && (
+                  <div className="mt-2">
+                    <Badge variant="destructive" className="w-full py-1 flex items-center justify-center">
+                      <AlertTriangle className="h-3 w-3 mr-1" />
+                      انتهى الاشتراك
+                    </Badge>
+                  </div>
+                )}
+                
+                {isNearExpiry && !isSubscriptionExpired && (
+                  <div className="mt-2">
+                    <Badge variant="outline" className="w-full py-1 flex items-center justify-center text-amber-600 border-amber-600">
+                      <AlertTriangle className="h-3 w-3 mr-1" />
+                      الاشتراك ينتهي قريباً
+                    </Badge>
+                  </div>
+                )}
               </div>
 
               <SidebarGroup>
                 <SidebarGroupContent>
                   <SidebarMenu>
+                    {isSuperAdmin && (
+                      <SidebarMenuItem>
+                        <SidebarMenuButton asChild className={currentPage === 'dashboard' ? 'bg-accent' : ''}>
+                          <a href="/admin">
+                            <LayoutDashboard className="h-4 w-4" />
+                            <span>لوحة المدير الرئيسي</span>
+                          </a>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )}
+
                     <SidebarMenuItem>
                       <SidebarMenuButton asChild className={currentPage === 'dashboard' ? 'bg-accent' : ''}>
                         <a href="/">
@@ -84,14 +163,16 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                         </a>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild className={currentPage === 'vendor-settings' ? 'bg-accent' : ''}>
-                        <a href="/vendor-settings">
-                          <Settings className="h-4 w-4" />
-                          <span>{t('vendorSettings')}</span>
-                        </a>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
+                    {isSuperAdmin && (
+                      <SidebarMenuItem>
+                        <SidebarMenuButton asChild className={currentPage === 'vendor-settings' ? 'bg-accent' : ''}>
+                          <a href="/vendor-settings">
+                            <Settings className="h-4 w-4" />
+                            <span>{t('vendorSettings')}</span>
+                          </a>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )}
                   </SidebarMenu>
                 </SidebarGroupContent>
               </SidebarGroup>
@@ -113,12 +194,84 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                   {currentPage === 'vendor-settings' && t('vendorSettings')}
                 </h1>
               </div>
-              <div className="flex items-center">
+              <div className="flex items-center gap-2">
                 <LanguageSwitcher />
+                
+                {isSubscriptionExpired && (
+                  <Button size="sm" variant="destructive" onClick={() => navigate('/subscription-expired')}>
+                    <AlertTriangle className="mr-1 h-4 w-4" /> انتهى الاشتراك
+                  </Button>
+                )}
+                
+                {currentUser && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                        <Avatar className="h-8 w-8">
+                          <AvatarFallback>{currentUser.name?.substring(0, 1) || currentUser.email.substring(0, 1).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56" align="end" forceMount>
+                      <DropdownMenuLabel className="font-normal">
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-medium leading-none">{currentUser.name || currentUser.email}</p>
+                          <p className="text-xs leading-none text-muted-foreground">
+                            {currentUser.email}
+                          </p>
+                        </div>
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => navigate('/users')}>
+                        <Users className="mr-2 h-4 w-4" />
+                        <span>الملف الشخصي</span>
+                      </DropdownMenuItem>
+                      {!isSuperAdmin && userOrganization?.planExpiresAt && (
+                        <DropdownMenuItem>
+                          <CreditCard className="mr-2 h-4 w-4" />
+                          <span>الاشتراك ينتهي في {format(new Date(userOrganization.planExpiresAt), 'dd/MM/yyyy', { locale: ar })}</span>
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={logout}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>تسجيل الخروج</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
               </div>
             </header>
 
             <main className="flex-1 overflow-auto p-2 sm:p-4 lg:p-6">
+              {isSubscriptionExpired && !isSuperAdmin && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md flex items-center">
+                  <AlertTriangle className="mr-2 h-5 w-5 text-red-500" />
+                  <div>
+                    <p className="font-medium">انتهت صلاحية الاشتراك</p>
+                    <p className="text-sm">بعض الميزات قد تكون محدودة. يرجى تجديد الاشتراك للاستمرار بالاستفادة من كامل الخدمات.</p>
+                  </div>
+                  <Button size="sm" variant="destructive" className="ml-auto" onClick={() => navigate('/subscription-expired')}>
+                    تجديد الاشتراك
+                  </Button>
+                </div>
+              )}
+              
+              {isNearExpiry && !isSubscriptionExpired && !isSuperAdmin && (
+                <div className="mb-4 p-3 bg-amber-50 border border-amber-200 text-amber-700 rounded-md flex items-center">
+                  <AlertTriangle className="mr-2 h-5 w-5 text-amber-500" />
+                  <div>
+                    <p className="font-medium">اشتراكك ينتهي قريباً</p>
+                    <p className="text-sm">
+                      ينتهي اشتراكك في {userOrganization?.planExpiresAt && format(new Date(userOrganization.planExpiresAt), 'dd/MM/yyyy', { locale: ar })}. نوصي بالتجديد قبل انتهاء الاشتراك لتفادي انقطاع الخدمة.
+                    </p>
+                  </div>
+                  <Button size="sm" variant="outline" className="ml-auto border-amber-500 text-amber-700" onClick={() => navigate('/subscription-expired')}>
+                    تجديد الاشتراك
+                  </Button>
+                </div>
+              )}
+              
               <div className="mx-auto">
                 {children}
               </div>
