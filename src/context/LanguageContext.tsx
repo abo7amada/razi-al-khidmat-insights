@@ -28,6 +28,10 @@ const translations: Translations = {
     ar: 'التقارير',
     en: 'Reports',
   },
+  surveyCreator: {
+    ar: 'إنشاء استبيان',
+    en: 'Survey Creator',
+  },
   headquarters: {
     ar: 'المركز الرئيسي',
     en: 'Headquarters',
@@ -132,6 +136,90 @@ const translations: Translations = {
     ar: 'شكراً لمشاركتك',
     en: 'Thank you for your feedback',
   },
+  createNewSurvey: {
+    ar: 'إنشاء استبيان جديد',
+    en: 'Create New Survey',
+  },
+  mySurveys: {
+    ar: 'استبياناتي',
+    en: 'My Surveys',
+  },
+  editSurvey: {
+    ar: 'تعديل الاستبيان',
+    en: 'Edit Survey',
+  },
+  deleteSurvey: {
+    ar: 'حذف الاستبيان',
+    en: 'Delete Survey',
+  },
+  surveyTitle: {
+    ar: 'عنوان الاستبيان',
+    en: 'Survey Title',
+  },
+  description: {
+    ar: 'الوصف',
+    en: 'Description',
+  },
+  questions: {
+    ar: 'الأسئلة',
+    en: 'Questions',
+  },
+  addQuestion: {
+    ar: 'إضافة سؤال',
+    en: 'Add Question',
+  },
+  questionType: {
+    ar: 'نوع السؤال',
+    en: 'Question Type',
+  },
+  multipleChoice: {
+    ar: 'اختيار متعدد',
+    en: 'Multiple Choice',
+  },
+  rating: {
+    ar: 'تقييم',
+    en: 'Rating',
+  },
+  textAnswer: {
+    ar: 'إجابة نصية',
+    en: 'Text Answer',
+  },
+  options: {
+    ar: 'الخيارات',
+    en: 'Options',
+  },
+  addOption: {
+    ar: 'إضافة خيار',
+    en: 'Add Option',
+  },
+  preview: {
+    ar: 'معاينة',
+    en: 'Preview',
+  },
+  save: {
+    ar: 'حفظ',
+    en: 'Save',
+  },
+  active: {
+    ar: 'نشط',
+    en: 'Active',
+  },
+  inactive: {
+    ar: 'غير نشط',
+    en: 'Inactive',
+  },
+  responses: {
+    ar: 'الردود',
+    en: 'Responses',
+  },
+  createdOn: {
+    ar: 'تاريخ الإنشاء',
+    en: 'Created On',
+  },
+  status: {
+    ar: 'الحالة',
+    en: 'Status',
+  }
 };
 
 interface LanguageContextType {

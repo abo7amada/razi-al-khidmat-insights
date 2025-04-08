@@ -3,11 +3,11 @@ import React, { ReactNode } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { BarChart3, FileText, Home } from 'lucide-react';
+import { BarChart3, FileText, Home, FilePlus } from 'lucide-react';
 
 interface LayoutProps {
   children: ReactNode;
-  currentPage: 'dashboard' | 'survey' | 'reports';
+  currentPage: 'dashboard' | 'survey' | 'reports' | 'survey-creator';
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
@@ -43,6 +43,14 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
+                      <SidebarMenuButton asChild className={currentPage === 'survey-creator' ? 'bg-accent' : ''}>
+                        <a href="/survey-creator">
+                          <FilePlus />
+                          <span>{t('surveyCreator')}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
                       <SidebarMenuButton asChild className={currentPage === 'reports' ? 'bg-accent' : ''}>
                         <a href="/reports">
                           <BarChart3 />
@@ -64,6 +72,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage }) => {
                   {currentPage === 'dashboard' && t('dashboard')}
                   {currentPage === 'survey' && t('survey')}
                   {currentPage === 'reports' && t('reports')}
+                  {currentPage === 'survey-creator' && t('surveyCreator')}
                 </h1>
               </div>
               <div className="flex items-center">
