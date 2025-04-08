@@ -35,7 +35,6 @@ const TrendChart: React.FC<TrendChartProps> = ({ title, data }) => {
   const chartConfig = {
     trend: {
       label: "Satisfaction",
-      color: "#0ea5e9",
       theme: {
         light: "#0ea5e9",
         dark: "#0ea5e9"
