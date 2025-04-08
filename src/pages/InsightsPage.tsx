@@ -1,11 +1,12 @@
 
 import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 
-// This is now just a redirect page to /company/:id/insights/overview
 const InsightsPage = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id?: string }>();
+  const { t } = useLanguage();
   
   useEffect(() => {
     // If we have a company ID, redirect to the insights overview page
@@ -20,7 +21,7 @@ const InsightsPage = () => {
     }
   }, [id, navigate]);
   
-  return <div>Redirecting to insights...</div>;
+  return <div>{t('redirecting')}...</div>;
 };
 
 export default InsightsPage;

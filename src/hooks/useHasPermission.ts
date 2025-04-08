@@ -7,14 +7,20 @@ type PermissionTypes =
   | 'edit_alert_rules'
   | 'save_segments'
   | 'view_branch_data'
-  | 'delete_comments';
+  | 'delete_comments'
+  | 'view_reports'; // إضافة صلاحية لعرض التقارير
 
 export const useHasPermission = () => {
   const { currentUser, userRole, isSuperAdmin } = useAuth();
   
   const hasPermission = (permission: PermissionTypes, branchId?: string): boolean => {
-    // Super admins and system admins have all permissions
-    if (isSuperAdmin || userRole === 'system_admin') {
+    // Super admins have all permissions
+    if (isSuperAdmin) {
+      return true;
+    }
+    
+    // System admins have all permissions
+    if (userRole === 'system_admin') {
       return true;
     }
     
@@ -35,7 +41,7 @@ export const useHasPermission = () => {
         
       case 'viewer':
         // Viewers can only view insights and export reports
-        if (permission === 'view_insights' || permission === 'export_reports') {
+        if (permission === 'view_insights' || permission === 'export_reports' || permission === 'view_reports') {
           return true;
         }
         return false;
@@ -44,7 +50,7 @@ export const useHasPermission = () => {
         // Branch managers can do everything but only for their branch
         if (branchId && currentUser?.branches?.includes(branchId)) {
           return true;
-        } else if (!branchId && permission === 'view_insights') {
+        } else if (!branchId && (permission === 'view_insights' || permission === 'view_reports')) {
           // Branch managers can view insights generally
           return true;
         }

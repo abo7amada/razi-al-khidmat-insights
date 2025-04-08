@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
 type Language = 'ar' | 'en';
@@ -264,6 +263,58 @@ const translations: Translations = {
     ar: 'فيسبوك',
     en: 'Facebook',
   },
+  insights: {
+    ar: 'التحليلات',
+    en: 'Insights'
+  },
+  overview: {
+    ar: 'نظرة عامة',
+    en: 'Overview'
+  },
+  insightsAnalytics: {
+    ar: 'تحليلات البيانات',
+    en: 'Analytics'
+  },
+  branchBenchmark: {
+    ar: 'مقارنة الفروع',
+    en: 'Branch Benchmark'
+  },
+  sentimentAnalysis: {
+    ar: 'تحليل المشاعر',
+    en: 'Sentiment Analysis'
+  },
+  smartAlerts: {
+    ar: 'التنبيهات الذكية',
+    en: 'Smart Alerts'
+  },
+  advancedSegmentation: {
+    ar: 'التقسيم المتقدم',
+    en: 'Advanced Segmentation'
+  },
+  comingSoon: {
+    ar: 'قريبًا',
+    en: 'Coming Soon'
+  },
+  errorLoadingInsights: {
+    ar: 'خطأ في تحميل البيانات',
+    en: 'Error loading insights'
+  },
+  satisfactionTrend: {
+    ar: 'اتجاه الرضا',
+    en: 'Satisfaction Trend'
+  },
+  noSites: {
+    ar: 'لا توجد مواقع',
+    en: 'No Sites'
+  },
+  noSitesDescription: {
+    ar: 'لم يتم العثور على أي مواقع لهذه الشركة. يمكنك إضافة موقع جديد باستخدام زر الإضافة.',
+    en: 'No sites found for this company. You can add a new site using the add button.'
+  },
+  sitesManagement: {
+    ar: 'إدارة المواقع',
+    en: 'Sites Management'
+  },
   multiVendor: {
     ar: 'متعدد البائعين',
     en: 'Multi-Vendor',
@@ -275,6 +326,46 @@ const translations: Translations = {
   organizationName: {
     ar: 'اسم المؤسسة',
     en: 'Organization Name',
+  },
+  organizations: {
+    ar: 'المؤسسات',
+    en: 'Organizations',
+  },
+  general: {
+    ar: 'عام',
+    en: 'General',
+  },
+  appearance: {
+    ar: 'المظهر',
+    en: 'Appearance',
+  },
+  authentication: {
+    ar: 'المصادقة',
+    en: 'Authentication',
+  },
+  pricing: {
+    ar: 'التسعير',
+    en: 'Pricing',
+  },
+  settingsSaved: {
+    ar: 'تم حفظ الإعدادات',
+    en: 'Settings Saved',
+  },
+  vendorSettingsSaved: {
+    ar: 'تم حفظ إعدادات البائع',
+    en: 'Vendor Settings Saved',
+  },
+  credentialsSaved: {
+    ar: 'تم حفظ بيانات الاعتماد',
+    en: 'Credentials Saved',
+  },
+  pricingSettingsSaved: {
+    ar: 'تم حفظ إعدادات التسعير',
+    en: 'Pricing Settings Saved',
+  },
+  redirecting: {
+    ar: 'إعادة التوجيه',
+    en: 'Redirecting'
   }
 };
 

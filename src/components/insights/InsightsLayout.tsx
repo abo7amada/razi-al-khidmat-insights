@@ -29,7 +29,7 @@ import { Button } from '../ui/button';
 
 const InsightsLayout: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname.split('/').pop();

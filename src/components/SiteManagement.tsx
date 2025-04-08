@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { Site, mockSites } from '../types/company';
@@ -43,16 +43,18 @@ import { useBranches } from '@/hooks/useBranches';
 
 interface SiteManagementProps {
   companyId?: string;
+  showAddDialog?: boolean;
+  setShowAddDialog?: (show: boolean) => void;
 }
 
-const SiteManagement: React.FC<SiteManagementProps> = ({ companyId }) => {
+const SiteManagement: React.FC<SiteManagementProps> = ({ companyId, showAddDialog = false, setShowAddDialog }) => {
   const { t, language } = useLanguage();
   const { userOrganization } = useAuth();
   const { toast } = useToast();
   const { data: branchSites = [] } = useBranches(companyId || userOrganization?.id || '');
   
   const [sites, setSites] = useState<Site[]>(mockSites.filter(site => site.companyId === (companyId || userOrganization?.id)));
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(showAddDialog);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [currentSite, setCurrentSite] = useState<Site | null>(null);
@@ -66,6 +68,18 @@ const SiteManagement: React.FC<SiteManagementProps> = ({ companyId }) => {
     phone: '',
     isActive: true
   });
+
+  useEffect(() => {
+    if (showAddDialog) {
+      setIsAddDialogOpen(true);
+    }
+  }, [showAddDialog]);
+
+  useEffect(() => {
+    if (setShowAddDialog && !isAddDialogOpen) {
+      setShowAddDialog(false);
+    }
+  }, [isAddDialogOpen, setShowAddDialog]);
 
   // Filter sites based on search term
   const filteredSites = sites.filter(site => 
