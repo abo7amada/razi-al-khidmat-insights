@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,11 +6,16 @@ import { mockSatisfactionData, locations, calculateSummaryStatistics } from '../
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import LocationSelector from './LocationSelector';
 import { useIsMobile } from '../hooks/use-mobile';
+import { useAuth } from '../context/AuthContext';
 
 const Dashboard: React.FC = () => {
   const { t, language } = useLanguage();
   const [selectedLocationId, setSelectedLocationId] = useState<string | undefined>(undefined);
   const isMobile = useIsMobile();
+  const { userOrganization } = useAuth();
+  
+  // Get company ID for the LocationSelector
+  const companyId = userOrganization?.id;
   
   // Filter data by location if selected
   const filteredData = selectedLocationId 
@@ -99,7 +103,8 @@ const Dashboard: React.FC = () => {
           <CardContent>
             <LocationSelector 
               onSelectLocation={setSelectedLocationId} 
-              selectedLocationId={selectedLocationId} 
+              selectedLocationId={selectedLocationId}
+              companyId={companyId}
             />
           </CardContent>
         </Card>

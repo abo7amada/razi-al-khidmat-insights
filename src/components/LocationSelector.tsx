@@ -18,26 +18,38 @@ import {
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
+import { useAuth } from '../context/AuthContext';
+import { useBranches } from '@/hooks/useBranches';
+import { Site } from '@/types/company';
 
 interface LocationSelectorProps {
   onSelectLocation: (locationId: string) => void;
   selectedLocationId?: string;
+  companyId?: string;
 }
 
-const LocationSelector: React.FC<LocationSelectorProps> = ({ onSelectLocation, selectedLocationId }) => {
+const LocationSelector: React.FC<LocationSelectorProps> = ({ onSelectLocation, selectedLocationId, companyId }) => {
   const { t, language } = useLanguage();
+  const { userOrganization } = useAuth();
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<string | undefined>(selectedLocationId);
   const [searchQuery, setSearchQuery] = useState("");
-
+  
+  // Get company branches/sites
+  const effectiveCompanyId = companyId || userOrganization?.id || '';
+  const { data: companySites = [] } = useBranches(effectiveCompanyId);
+  
   // Update the selected location when the prop changes
   useEffect(() => {
     setSelected(selectedLocationId);
   }, [selectedLocationId]);
 
-  const selectedLocation = locations.find(loc => loc.id === selected);
-  const locationName = selectedLocation 
-    ? (language === 'ar' ? selectedLocation.nameAr : selectedLocation.nameEn)
+  // Find the selected site from company sites
+  const selectedSite = companySites.find(site => site.id === selected);
+  
+  // Display name based on language and selected site
+  const locationName = selectedSite 
+    ? (language === 'ar' ? (selectedSite.nameAr || selectedSite.name) : (selectedSite.nameEn || selectedSite.name))
     : t('selectLocation');
 
   const handleSelect = useCallback((locationId: string) => {
@@ -47,23 +59,24 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ onSelectLocation, s
     onSelectLocation(locationId);
     setOpen(false);
     
-    const location = locations.find(loc => loc.id === locationId);
-    if (location) {
+    const site = companySites.find(site => site.id === locationId);
+    if (site) {
       toast({
         title: t('locationSelected'),
-        description: language === 'ar' ? location.nameAr : location.nameEn,
+        description: language === 'ar' ? (site.nameAr || site.name) : (site.nameEn || site.name),
         duration: 3000,
       });
     }
-  }, [language, onSelectLocation, t]);
+  }, [language, onSelectLocation, t, companySites]);
 
-  // Filter locations based on search query
-  const filteredLocations = locations.filter(location => {
+  // Filter sites based on search query
+  const filteredSites = companySites.filter(site => {
     if (!searchQuery) return true;
-    const nameEn = location.nameEn.toLowerCase();
-    const nameAr = location.nameAr.toLowerCase();
+    const name = site.name.toLowerCase();
+    const nameAr = (site.nameAr || '').toLowerCase();
+    const nameEn = (site.nameEn || '').toLowerCase();
     const query = searchQuery.toLowerCase();
-    return nameEn.includes(query) || nameAr.includes(query);
+    return name.includes(query) || nameAr.includes(query) || nameEn.includes(query);
   });
 
   // Safe search query change handler
@@ -95,27 +108,27 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ onSelectLocation, s
             />
           </div>
           <div className="max-h-60 overflow-auto">
-            {filteredLocations.length === 0 ? (
+            {filteredSites.length === 0 ? (
               <div className="p-2 text-center text-muted-foreground">
-                {language === 'ar' ? 'لا توجد مواقع' : 'No locations found.'}
+                {language === 'ar' ? 'لا توجد فروع لهذه الشركة' : 'No branches found for this company'}
               </div>
             ) : (
-              filteredLocations.map((location) => (
+              filteredSites.map((site) => (
                 <div
-                  key={location.id}
+                  key={site.id}
                   className={cn(
                     "px-2 py-1.5 cursor-pointer flex items-center",
-                    selected === location.id ? "bg-accent" : "hover:bg-muted"
+                    selected === site.id ? "bg-accent" : "hover:bg-muted"
                   )}
-                  onClick={() => handleSelect(location.id)}
+                  onClick={() => handleSelect(site.id)}
                 >
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      selected === location.id ? "opacity-100" : "opacity-0"
+                      selected === site.id ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {language === 'ar' ? location.nameAr : location.nameEn}
+                  {language === 'ar' ? (site.nameAr || site.name) : (site.nameEn || site.name)}
                 </div>
               ))
             )}
