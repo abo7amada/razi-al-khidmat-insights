@@ -12,6 +12,7 @@ import SurveyCreatorPage from "./pages/SurveyCreatorPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import UsersPage from "./pages/UsersPage";
 import LocationsPage from "./pages/LocationsPage";
+import SitesPage from "./pages/SitesPage";
 import VendorSettingsPage from "./pages/VendorSettingsPage";
 import LoginPage from "./pages/LoginPage";
 import SuperAdminPage from "./pages/SuperAdminPage";
@@ -33,7 +34,7 @@ const AppRoutes = () => {
       
       {/* مسارات المدير الرئيسي */}
       <Route path="/admin" element={
-        <ProtectedRoute allowedRoles={['super_admin']}>
+        <ProtectedRoute allowedRoles={['super_admin', 'system_admin']}>
           <SuperAdminPage />
         </ProtectedRoute>
       } />
@@ -55,7 +56,7 @@ const AppRoutes = () => {
         </ProtectedRoute>
       } />
       <Route path="/survey-creator" element={
-        <ProtectedRoute requireActiveSubscription allowedRoles={['super_admin', 'company_admin', 'editor']}>
+        <ProtectedRoute requireActiveSubscription allowedRoles={['super_admin', 'system_admin', 'company_admin', 'company_owner', 'editor']}>
           <SurveyCreatorPage />
         </ProtectedRoute>
       } />
@@ -65,7 +66,7 @@ const AppRoutes = () => {
         </ProtectedRoute>
       } />
       <Route path="/users" element={
-        <ProtectedRoute allowedRoles={['super_admin', 'company_admin']}>
+        <ProtectedRoute allowedRoles={['super_admin', 'system_admin', 'company_admin', 'company_owner']}>
           <UsersPage />
         </ProtectedRoute>
       } />
@@ -74,8 +75,13 @@ const AppRoutes = () => {
           <LocationsPage />
         </ProtectedRoute>
       } />
+      <Route path="/sites" element={
+        <ProtectedRoute allowedRoles={['super_admin', 'system_admin', 'company_admin', 'company_owner', 'editor']}>
+          <SitesPage />
+        </ProtectedRoute>
+      } />
       <Route path="/vendor-settings" element={
-        <ProtectedRoute allowedRoles={['super_admin']}>
+        <ProtectedRoute allowedRoles={['super_admin', 'system_admin']}>
           <VendorSettingsPage />
         </ProtectedRoute>
       } />

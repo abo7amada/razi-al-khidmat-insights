@@ -34,7 +34,8 @@ export const mockSurveys: Survey[] = [
     status: "active",
     responseCount: 42,
     createdBy: "user1",
-    companyId: "comp1"
+    companyId: "comp1",
+    targetType: "allSites"
   },
   {
     id: "survey-2",
@@ -68,7 +69,9 @@ export const mockSurveys: Survey[] = [
     status: "active",
     responseCount: 27,
     createdBy: "user1",
-    companyId: "comp1"
+    companyId: "comp1",
+    targetType: "singleSite",
+    siteId: "site1"
   },
   {
     id: "survey-3",
@@ -102,6 +105,7 @@ export const mockSurveys: Survey[] = [
     status: "inactive",
     responseCount: 12,
     createdBy: "user2",
-    companyId: "comp1"
+    companyId: "comp1",
+    targetType: "allSites"
   }
 ];

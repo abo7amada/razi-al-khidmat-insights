@@ -18,6 +18,7 @@ export interface SurveyQuestion {
   matrixRows?: string[];
   matrixColumns?: string[];
   companyId: string;  // إضافة ربط للشركة
+  siteId?: string;    // إضافة ربط اختياري للفرع
 }
 
 export interface Survey {
@@ -32,6 +33,8 @@ export interface Survey {
   responseCount: number;
   createdBy: string;
   companyId: string;  // إضافة ربط للشركة
+  targetType: 'allSites' | 'singleSite'; // نوع توجيه الاستبيان
+  siteId?: string;    // معرف الفرع في حالة singleSite
   location?: string;
   startDate?: string;
   endDate?: string;

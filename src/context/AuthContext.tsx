@@ -15,10 +15,12 @@ interface AuthContextType {
   checkAuth: () => void;
   isUserInRole: (roles: UserRole[]) => boolean;
   isSuperAdmin: boolean;
+  isSystemAdmin: boolean;
+  isCompanyOwner: boolean;
   isCompanyAdmin: boolean;
   isEditor: boolean;
   isViewer: boolean;
-  isAdmin: boolean; // إضافة جديدة
+  isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -31,10 +33,12 @@ const AuthContext = createContext<AuthContextType>({
   checkAuth: () => {},
   isUserInRole: () => false,
   isSuperAdmin: false,
+  isSystemAdmin: false,
+  isCompanyOwner: false,
   isCompanyAdmin: false,
   isEditor: false,
   isViewer: false,
-  isAdmin: false // إضافة جديدة
+  isAdmin: false
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -119,12 +123,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
   // الدوال المساعدة للتحقق من أدوار المستخدمين
   const isSuperAdmin = currentUser?.role === 'super_admin';
+  const isSystemAdmin = currentUser?.role === 'system_admin';
+  const isCompanyOwner = currentUser?.role === 'company_owner';
   const isCompanyAdmin = currentUser?.role === 'company_admin';
   const isEditor = currentUser?.role === 'editor';
   const isViewer = currentUser?.role === 'viewer';
   
-  // خاصية جديدة للتحقق مما إذا كان المستخدم مسؤولًا بأي شكل
-  const isAdmin = isSuperAdmin || isCompanyAdmin;
+  // خاصية للتحقق مما إذا كان المستخدم مسؤولًا بأي شكل
+  const isAdmin = isSuperAdmin || isSystemAdmin || isCompanyAdmin || isCompanyOwner;
 
   return (
     <AuthContext.Provider 
@@ -138,10 +144,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         checkAuth,
         isUserInRole,
         isSuperAdmin,
+        isSystemAdmin,
+        isCompanyOwner,
         isCompanyAdmin,
         isEditor,
         isViewer,
-        isAdmin // إضافة الخاصية الجديدة
+        isAdmin
       }}
     >
       {children}

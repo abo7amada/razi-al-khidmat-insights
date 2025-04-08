@@ -22,6 +22,7 @@ export interface User {
   active: boolean;
   lastLogin?: string;
   createdAt: string;
+  defaultSiteId?: string; // Added default site for company users
 }
 
 export const mockOrganizations: Organization[] = [
@@ -62,7 +63,7 @@ export const mockUsers: User[] = [
     id: 'admin1',
     email: 'admin@system.com',
     password: 'admin123',
-    role: 'super_admin',
+    role: 'system_admin',
     active: true,
     name: 'مدير النظام',
     createdAt: '2024-01-01T00:00:00Z'
@@ -71,11 +72,12 @@ export const mockUsers: User[] = [
     id: 'user1',
     email: 'admin@alnoor-tech.com',
     password: 'password123',
-    role: 'company_admin',
+    role: 'company_owner',
     organizationId: 'comp1',
     active: true,
     name: 'أحمد محمد',
-    createdAt: '2024-01-01T00:00:00Z'
+    createdAt: '2024-01-01T00:00:00Z',
+    defaultSiteId: 'site1'
   },
   {
     id: 'user2',
@@ -85,7 +87,8 @@ export const mockUsers: User[] = [
     organizationId: 'comp1',
     active: true,
     name: 'سارة أحمد',
-    createdAt: '2024-01-02T00:00:00Z'
+    createdAt: '2024-01-02T00:00:00Z',
+    defaultSiteId: 'site2'
   },
   {
     id: 'user3',
@@ -101,11 +104,12 @@ export const mockUsers: User[] = [
     id: 'user4',
     email: 'admin@alamal.com',
     password: 'password123',
-    role: 'company_admin',
+    role: 'company_owner',
     organizationId: 'comp2',
     active: true,
     name: 'فاطمة حسن',
-    createdAt: '2024-02-15T00:00:00Z'
+    createdAt: '2024-02-15T00:00:00Z',
+    defaultSiteId: 'site3'
   },
   {
     id: 'user5',
