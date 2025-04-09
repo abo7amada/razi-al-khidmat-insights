@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, mockUsers, Organization, mockOrganizations } from '../components/vendor-settings/types';
 import { UserRole } from '../types/company';
@@ -22,7 +21,7 @@ interface AuthContextType {
   isEditor: boolean;
   isViewer: boolean;
   isAdmin: boolean;
-  canManageCompanies: boolean; // خاصية للتحكم بإمكانية إدارة الشركات
+  canManageCompanies: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -42,7 +41,7 @@ const AuthContext = createContext<AuthContextType>({
   isEditor: false,
   isViewer: false,
   isAdmin: false,
-  canManageCompanies: false // القيمة الافتراضية
+  canManageCompanies: false
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -164,7 +163,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isEditor,
         isViewer,
         isAdmin,
-        canManageCompanies // إضافة الخاصية
+        canManageCompanies
       }}
     >
       {children}

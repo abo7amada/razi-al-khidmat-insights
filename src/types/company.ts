@@ -5,7 +5,8 @@ export type UserRole =
   'company_admin' | 
   'editor' | 
   'viewer' |
-  'branchManager';
+  'branchManager' |
+  'admin'; // Added 'admin' as a valid role
 
 export interface Company {
   id: string;
