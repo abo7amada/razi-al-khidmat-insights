@@ -1,0 +1,297 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>Dynamic Survey Renderer</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #f7fafc;
+      font-family: 'Cairo', sans-serif;
+      color: #1a202c;
+      padding: 0;
+      margin: 0;
+    }
+    .container {
+      background: #fff;
+      max-width: 530px;
+      margin: 30px auto 0;
+      box-shadow: 0 4px 18px 2px #a0aec06c;
+      border-radius: 1.5em;
+      padding: 2.3rem 1.3rem 2rem 1.3rem;
+    }
+    .survey-title {
+      font-weight: 700;
+      color: #0f766e;
+      text-align: center;
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+    }
+    .survey-description {
+      color: #475569;
+      margin-bottom: 1.7rem;
+      text-align: center;
+      font-size: 1.02rem;
+    }
+    .question {
+      margin-bottom: 2.2rem;
+    }
+    .question-label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 0.7rem;
+      font-size: 1.08rem;
+    }
+    .answers-row {
+      display: flex;
+      gap: 1.1rem;
+    }
+    .good-bad-btn {
+      background: #38bdf8;
+      color: #fff;
+      border: none;
+      border-radius: .8em;
+      font-weight: bold;
+      padding: .68em 1.7em;
+      font-size: 1.06em;
+      cursor: pointer;
+      transition: filter .18s;
+      box-shadow: 0 1px 5px #38bdf822;
+    }
+    .good-bad-btn.selected {
+      background: #0f766e;
+    }
+    .rate-btn {
+      background: #f1f5f9;
+      color: #0f766e;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 50%;
+      width: 44px; height: 44px;
+      font-size: 1.27em;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background .14s, color .16s, border .15s;
+    }
+    .rate-btn.selected {
+      background: #0f766e;
+      color: #fff;
+      border-color: #0f766e;
+    }
+    textarea, input[type="text"] {
+      width: 100%;
+      border: 1.5px solid #cbd5e1;
+      border-radius: .65em;
+      font-size: 1em;
+      padding: .65em;
+      background: #f9fafb;
+      resize: vertical;
+      transition: border-color .17s;
+      margin-top: 0.3em;
+      font-family: inherit;
+    }
+    textarea:focus, input[type="text"]:focus {
+      border-color: #0f766e;
+      outline: none;
+      background: #fff;
+    }
+    .submit-btn {
+      width: 100%;
+      padding: 1em;
+      border: none;
+      font-size: 1.08em;
+      font-weight: 700;
+      border-radius: 1em;
+      background: #0f766e;
+      color: #fff;
+      margin-top: 1.2em;
+      transition: background .18s;
+      cursor: pointer;
+      box-shadow: 0 1px 7px #0f766e20;
+    }
+    .submit-btn:hover {
+      background: #1e40af;
+    }
+    .msg-success {
+      padding: 1.5em;
+      background: #f0fdf4;
+      color: #15803d;
+      border-radius: 1.2em;
+      text-align: center;
+      margin-top: 1.9em;
+      font-weight: bold;
+    }
+    .required { color: #dc2626; margin-right: 5px; }
+    @media (max-width: 700px) {
+      .container { padding: 1.08rem 0.14rem 1.7rem 0.14rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="survey-container">
+    <!-- Survey will be rendered here -->
+  </div>
+  <script>
+    // Example survey JSON (edit this variable as needed)
+    const surveyConfig = {
+      requireId: true,   // Change to false to hide the ID input
+      title: "استبيان تجربة العميل",
+      description: "نشكرك على تقييم تجربتك معنا اليوم. يرجى الإجابة على الأسئلة التالية:",
+      questions: [
+        {
+          id: "q1",
+          mode: "service_good_bad", // "service_good_bad", "rate_1_5", "text_rate"
+          label: "كيف تقيم جودة الخدمة لدينا اليوم؟",
+          required: true
+        },
+        {
+          id: "q2",
+          mode: "rate_1_5",
+          label: "قيم سرعة الاستجابة من 1 إلى 5",
+          required: true
+        },
+        {
+          id: "q3",
+          mode: "text_rate",
+          label: "شاركنا رأيك أو اقتراحاتك لتحسين تجربتك (اختياري):",
+          required: false,
+          placeholder: "اكتب هنا..."
+        }
+      ]
+    };
+
+    // Renders the survey form based on surveyConfig above
+    function renderSurvey(config) {
+      const container = document.getElementById('survey-container');
+      let html = '';
+
+      // Title and description
+      html += `
+        <div class="survey-title">${config.title || ''}</div>
+        <div class="survey-description">${config.description || ''}</div>
+        <form id="survey-form" autocomplete="off">
+      `;
+
+      // Optional user id field
+      if (config.requireId) {
+        html += `
+          <div class="question">
+            <label class="question-label" for="respondent-id">
+              <span class="required">*</span>الرجاء إدخال رقم الهوية أو رقم الموظف:
+            </label>
+            <input 
+              type="text" 
+              id="respondent-id"
+              name="respondent-id"
+              required
+              minlength="3"
+              maxlength="30"
+              placeholder="معرف المستخدم"
+              autocomplete="off"
+              />
+          </div>
+        `;
+      }
+
+      // Loop through questions
+      config.questions.forEach((q, i) => {
+        html += `<div class="question" data-qid="${q.id}">`;
+        html += `<label class="question-label">${q.required ? '<span class="required">*</span>' : ''}${q.label}</label>`;
+        if (q.mode === "service_good_bad") {
+          html += `
+            <div class="answers-row">
+              <button type="button" class="good-bad-btn" data-qid="${q.id}" data-value="good">جيد</button>
+              <button type="button" class="good-bad-btn" data-qid="${q.id}" data-value="bad">سيء</button>
+            </div>
+            <input type="hidden" name="${q.id}" id="${q.id}-input" ${q.required ? "required" : ""} />
+          `;
+        } else if (q.mode === "rate_1_5") {
+          html += `
+            <div class="answers-row">
+              ${[1,2,3,4,5].map(k=>`
+                <button type="button" class="rate-btn" data-qid="${q.id}" data-value="${k}">${k}</button>
+              `).join('')}
+            </div>
+            <input type="hidden" name="${q.id}" id="${q.id}-input" ${q.required ? "required" : ""} />
+          `;
+        } else if (q.mode === "text_rate") {
+          html += `
+            <textarea 
+              name="${q.id}" 
+              id="${q.id}-input"
+              rows="4"
+              ${q.required ? "required" : ""}
+              placeholder="${q.placeholder || ''}">
+            </textarea>
+          `;
+        }
+        html += `</div>`;
+      });
+
+      html += `
+        <button class="submit-btn" type="submit">إرسال الإجابات</button>
+      </form>
+      <div id="form-success" style="display:none"></div>
+      `;
+
+      container.innerHTML = html;
+
+      // Add interaction (Good/Bad selection)
+      document.querySelectorAll('.good-bad-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const qid = btn.getAttribute('data-qid');
+          document.querySelectorAll(`.good-bad-btn[data-qid="${qid}"]`).forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          document.getElementById(`${qid}-input`).value = btn.getAttribute('data-value');
+        });
+      });
+
+      // Add interaction (Rate 1-5)
+      document.querySelectorAll('.rate-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const qid = btn.getAttribute('data-qid');
+          document.querySelectorAll(`.rate-btn[data-qid="${qid}"]`).forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          document.getElementById(`${qid}-input`).value = btn.getAttribute('data-value');
+        });
+      });
+
+      // Handle form submit
+      document.getElementById('survey-form').onsubmit = function(e) {
+        e.preventDefault();
+        // Validate required fields (handled by browser for inputs, we check for buttons)
+        let valid = true;
+        config.questions.forEach(q=>{
+          if (q.mode!=="text_rate" && q.required) {
+            const val = document.getElementById(`${q.id}-input`).value;
+            if (!val) valid = false;
+          }
+        });
+        if (!valid) {
+          alert("الرجاء الإجابة على كل الحقول المطلوبة.");
+          return false;
+        }
+        // Gather responses
+        const response = {};
+        if (config.requireId) {
+          response.id = document.getElementById('respondent-id').value;
+        }
+        config.questions.forEach(q=>{
+          response[q.id] = document.getElementById(`${q.id}-input`).value || '';
+        });
+        // Show a thank you message
+        document.getElementById('form-success').innerHTML = "✅ شكراً! تم استلام إجاباتك بنجاح.";
+        document.getElementById('form-success').className = "msg-success";
+        document.getElementById('form-success').style.display = "block";
+        this.style.display = "none";
+        // For debug/demo: print result in console
+        console.log("Form response:", response);
+      };
+    }
+
+    // Render the survey on load
+    renderSurvey(surveyConfig);
+  </script>
+</body>
+</html>
